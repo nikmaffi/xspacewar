@@ -14,6 +14,7 @@ void initWindow(void) {
 
 int main(void) {
     initWindow();
+    InitAudioDevice();
 
     GameEngine engine;
     engine.gameLoop();

@@ -1,64 +1,73 @@
 #include <GameEngine.hpp>
 
-GameEngine::GameEngine() :
-p1jc(0),
-p2jc(0),
-p1jid(0),
-p2jid(1),
+GameEngine::GameEngine(void) :
+joystickConfigs {0, 0, 0, 0},
 monitor("./res/img/monitor.png"),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
     "./res/fonts/VT323.ttf",
-	24 * WINDOW_WIDTH / (unsigned int)WSCALE,
+	22 * WINDOW_WIDTH / (unsigned int)WSCALE,
     TEXT_COLOR
 ),
 background("./res/img/space.png"),
-player1(
-	(Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
-	"./res/img/player_1.png",
-    "./res/img/laser.png",
-    270.f,
-    .7f * WINDOW_WIDTH / WSCALE
-),
-player2(
-	(Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
-	"./res/img/player_2.png",
-    "./res/img/laser.png",
-    90.f,
-    .7f * WINDOW_WIDTH / WSCALE
-),
+players{
+    Player(
+        (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
+        "./res/img/player_1.png",
+        "./res/img/laser.png",
+        270.f,
+        .7f * WINDOW_WIDTH / WSCALE
+    ),
+    Player(
+        (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
+        "./res/img/player_2.png",
+        "./res/img/laser.png",
+        90.f,
+        .7f * WINDOW_WIDTH / WSCALE
+    ),
+    Player(
+        (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
+        "./res/img/player_3.png",
+        "./res/img/laser.png",
+        90.f,
+        .7f * WINDOW_WIDTH / WSCALE
+    ),
+    Player(
+        (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
+        "./res/img/player_4.png",
+        "./res/img/laser.png",
+        270.f,
+        .7f * WINDOW_WIDTH / WSCALE
+    )
+},
 anomaly(
     (Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
     "./res/img/anomaly.png",
     WINDOW_WIDTH / WSCALE
 ),
-phosphorus(player1, player2, anomaly, userInterface) {
+phosphorus(players, anomaly, userInterface),
+laserSound(LoadSound("./res/audio/laser.wav")),
+explosionSound(LoadSound("./res/audio/explosion.wav")) {
 	loadData();
 
-	player1.reset();
-	player2.reset();
+    for(size_t i = 0; i < numPlayers; i++) {
+        players[i].reset();
+    }
 
 	anomaly.changeAnomaly();
 }
 
 GameEngine::~GameEngine() {
-	std::ofstream stream("./data/data.bin", std::ios::binary);
+    UnloadSound(explosionSound);
+    UnloadSound(laserSound);
 
-	stream.write((char*)&burnInMonitorEffect, sizeof(bool));
-	stream.write((char*)&flickeringMonitorEffect, sizeof(bool));
-	stream.write((char*)&shipProjectilesLimit, sizeof(bool));
-	stream.write((char*)&shipFuelLimit, sizeof(bool));
-	stream.write((char*)&blackHoleAsAnomaly, sizeof(bool));
-	stream.write((char*)&retroStyleShips, sizeof(bool));
-	stream.write((char*)&oneShotOneKill, sizeof(bool));
+    CloseAudioDevice();
+    CloseWindow();
 
-	stream.write((char *)&p1jc, sizeof(unsigned));
-	stream.write((char *)&p2jc, sizeof(unsigned));
-
-	stream.close();
+    saveData();
 }
 
-void GameEngine::loadData() {
+void GameEngine::loadData(void) {
 	std::ifstream stream("./data/data.bin", std::ios::binary);
 
 	stream.read((char*)&burnInMonitorEffect, sizeof(bool));
@@ -68,18 +77,42 @@ void GameEngine::loadData() {
 	stream.read((char*)&blackHoleAsAnomaly, sizeof(bool));
 	stream.read((char*)&retroStyleShips, sizeof(bool));
 	stream.read((char*)&oneShotOneKill, sizeof(bool));
+    stream.read((char*)&playSounds, sizeof(bool));
+    stream.read((char*)&numPlayers, sizeof(int));
 
-	stream.read((char *)&p1jc, sizeof(unsigned));
-	stream.read((char *)&p2jc, sizeof(unsigned));
+	for(size_t i = 0; i < MAX_PLAYERS; i++) {
+        stream.read((char *)(joystickConfigs + i), sizeof(unsigned));
+    }
 
 	stream.close();
 }
 
-void GameEngine::eventsHandler() {
+void GameEngine::saveData(void) {
+    std::ofstream stream("./data/data.bin", std::ios::binary);
+
+	stream.write((char*)&burnInMonitorEffect, sizeof(bool));
+	stream.write((char*)&flickeringMonitorEffect, sizeof(bool));
+	stream.write((char*)&shipProjectilesLimit, sizeof(bool));
+	stream.write((char*)&shipFuelLimit, sizeof(bool));
+	stream.write((char*)&blackHoleAsAnomaly, sizeof(bool));
+	stream.write((char*)&retroStyleShips, sizeof(bool));
+	stream.write((char*)&oneShotOneKill, sizeof(bool));
+    stream.write((char*)&playSounds, sizeof(bool));
+    stream.write((char*)&numPlayers, sizeof(int));
+
+    for(size_t i = 0; i < MAX_PLAYERS; i++) {
+        stream.write((char *)(joystickConfigs + i), sizeof(unsigned));
+    }
+
+	stream.close();
+}
+
+void GameEngine::eventsHandler(void) {
     if(IsKeyPressed(KEY_ENTER)) {
         if(monitor.isRunning()) {
-            player1.reset();
-            player2.reset();
+            for(size_t i = 0; i < numPlayers; i++) {
+                players[i].reset();
+            }
 
             monitor.powerOff();
         } else {
@@ -88,22 +121,20 @@ void GameEngine::eventsHandler() {
     }
 
     if(!monitor.isRunning()) {
-        if(IsKeyPressed(KEY_TAB) && !monitor.isRunning()) {
-            int tmp = p1jid;
-            p1jid = p2jid;
-            p2jid = tmp;
-
-            tmp = p1jc;
-            p1jc = p2jc;
-            p2jc = tmp;
+        if(IsKeyPressed(KEY_ONE)) {
+            joystickConfigs[0] = (joystickConfigs[0] + 1) % JOYSTICK_CONFIGURATIONS;
         }
 
-        if(IsKeyPressed(KEY_LEFT_CONTROL)) {
-            p1jc = (p1jc + 1) % JOYSTICK_CONFIGURATIONS;
+        if(IsKeyPressed(KEY_TWO)) {
+            joystickConfigs[1] = (joystickConfigs[1] + 1) % JOYSTICK_CONFIGURATIONS;
         }
 
-        if(IsKeyPressed(KEY_RIGHT_CONTROL)) {
-            p2jc = (p2jc + 1) % JOYSTICK_CONFIGURATIONS;
+        if(IsKeyPressed(KEY_THREE)) {
+            joystickConfigs[2] = (joystickConfigs[2] + 1) % JOYSTICK_CONFIGURATIONS;
+        }
+
+        if(IsKeyPressed(KEY_FOUR)) {
+            joystickConfigs[3] = (joystickConfigs[3] + 1) % JOYSTICK_CONFIGURATIONS;
         }
 
         if(IsKeyPressed(KEY_F11)) {
@@ -118,12 +149,20 @@ void GameEngine::eventsHandler() {
             retroStyleShips = !retroStyleShips;
 
             if (retroStyleShips) {
-                player1.reloadTextures("./res/img/player_1.png", "./res/img/laser.png");
-                player2.reloadTextures("./res/img/player_2.png", "./res/img/laser.png");
+                players[0].reloadTextures("./res/img/player_1.png", "./res/img/laser.png");
+                players[1].reloadTextures("./res/img/player_2.png", "./res/img/laser.png");
+                players[2].reloadTextures("./res/img/player_3.png", "./res/img/laser.png");
+                players[3].reloadTextures("./res/img/player_4.png", "./res/img/laser.png");
             } else {
-                player1.reloadTextures("./res/img/blue_player.png", "./res/img/blue_laser.png");
-                player2.reloadTextures("./res/img/red_player.png", "./res/img/red_laser.png");
+                players[0].reloadTextures("./res/img/blue_player.png", "./res/img/blue_laser.png");
+                players[1].reloadTextures("./res/img/red_player.png", "./res/img/red_laser.png");
+                players[2].reloadTextures("./res/img/player_empire.png", "./res/img/green_laser.png");
+                players[3].reloadTextures("./res/img/player_rebellion.png", "./res/img/magenta_laser.png");
             }
+        }
+
+        if(IsKeyPressed(KEY_F8)) {
+            playSounds = !playSounds;
         }
 
         if(IsKeyPressed(KEY_F1)) {
@@ -147,107 +186,109 @@ void GameEngine::eventsHandler() {
 
             shipProjectilesLimit = true;
 
-            player1.reset();
-            player2.reset();
+            for(size_t i = 0; i < numPlayers; i++) {
+                players[i].reset();
+            }
+        }
+
+        if(IsKeyPressed(KEY_F5)) {
+            numPlayers = (numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
         }
     } else {
-        // Player 1
-        if(IsKeyPressed(KEY_W) || IsGamepadButtonPressed(p1jid, joystickMap[p1jc][4])) {
-            player1.shoot();
-        }
+        for(size_t i = 0; i < numPlayers; i++) {
+            if(IsKeyDown(keyboardMap[i][0]) || IsGamepadButtonDown(i, joystickMap[joystickConfigs[i]][0])) {
+                players[i].move(SHIP_SPRINT);
+            }
 
-        if(IsKeyDown(KEY_A) || GetGamepadAxisMovement(p1jid, 0) < -joystickMap[p1jc][0] / 100.f) {
-            player1.rotate(-SHIP_ROTATION_SPEED);
-        }
+            if(IsKeyDown(keyboardMap[i][1]) || GetGamepadAxisMovement(i, 0) < -joystickMap[joystickConfigs[i]][1] / 100.f) {
+                players[i].rotate(-SHIP_ROTATION_SPEED);
+            }
 
-        if(IsKeyDown(KEY_S) || IsGamepadButtonDown(p1jid, joystickMap[p1jc][2])) {
-            player1.move(SHIP_SPRINT);
-        }
+            if(IsKeyDown(keyboardMap[i][2]) || GetGamepadAxisMovement(i, 0) > joystickMap[joystickConfigs[i]][2] / 100.f) {
+                players[i].rotate(SHIP_ROTATION_SPEED);
+            }
 
-        if(IsKeyDown(KEY_D) || GetGamepadAxisMovement(p1jid, 0) > joystickMap[p1jc][1] / 100.f) {
-            player1.rotate(SHIP_ROTATION_SPEED);
-        }
+            if(IsKeyPressed(keyboardMap[i][3]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][3])) {
+                players[i].shoot(laserSound);
+            }
 
-        if(IsKeyPressed(KEY_E) || IsGamepadButtonPressed(p1jid, joystickMap[p1jc][3])) {
-            player1.hyperspace();
-        }
-
-        // Player 2
-        if(IsKeyPressed(KEY_UP) || IsGamepadButtonPressed(p2jid, joystickMap[p2jc][4])) {
-            player2.shoot();
-        }
-
-        if(IsKeyDown(KEY_LEFT) || GetGamepadAxisMovement(p2jid, 0) < -joystickMap[p2jc][0] / 100.f) {
-            player2.rotate(-SHIP_ROTATION_SPEED);
-        }
-
-        if(IsKeyDown(KEY_DOWN) || IsGamepadButtonDown(p2jid, joystickMap[p2jc][2])) {
-            player2.move(SHIP_SPRINT);
-        }
-
-        if(IsKeyDown(KEY_RIGHT) || GetGamepadAxisMovement(p2jid, 0) > joystickMap[p2jc][1] / 100.f) {
-            player2.rotate(SHIP_ROTATION_SPEED);
-        }
-
-        if(IsKeyPressed(KEY_DELETE) || IsGamepadButtonPressed(p2jid, joystickMap[p2jc][3])) {
-            player2.hyperspace();
+            if(IsKeyPressed(keyboardMap[i][4]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][4])) {
+                players[i].hyperspace();
+            }
         }
     }
 }
 
-void GameEngine::update() {
+void GameEngine::update(void) {
 	if(burnInMonitorEffect) {
 		phosphorus.update(monitor.isRunning());
 	}
 
 	if(!monitor.isRunning()) {
 		userInterface.update(
-			"               XSPACEWAR!               \n"
-			"            by Nicolo' Maffi             \n\n"
+			"                     XSPACEWAR!               \n"
+			"                  by Nicolo' Maffi             \n\n"
 
 			"System Keys:\n"
-			"[ENTER]     Start/Reset game\n"
-			"[ESC]       Quit\n\n"
+			"[ENTER]               Start/Reset game\n"
+			"[ESC]                 Quit\n\n"
 
 			"Spaceship Keys:\n"
-			"[W] [UP]    Shoot\n"
-			"[S] [DOWN]  Turbo\n"
-			"[A] [LEFT]  Left rotation\n"
-			"[D] [RIGHT] Right rotation\n"
-			"[E] [CANC]  Hyperspace\n\n"
+			"[W] [UP]    [T] [I]   Shoot\n"
+			"[S] [DOWN]  [G] [K]   Turbo\n"
+			"[A] [LEFT]  [F] [J]   Left rotation\n"
+			"[D] [RIGHT] [H] [L]   Right rotation\n"
+			"[E] [CANC]  [Y] [O]   Hyperspace\n\n"
 
 			"Joystick Configuration:\n"
-			"[TAB]       Swap joysticks            \n"
-			"[L CTRL]    Player 1                $j\n"
-			"[R CTRL]    Player 2                $j\n\n"
+			"[1]                   Player 1                $j\n"
+			"[2]                   Player 2                $j\n"
+            "[3]                   Player 3                $j\n"
+            "[4]                   Player 4                $j\n\n"
 
 			"Appearance:\n"
-			"[F11]       Burn-in monitor effect     $f\n"
-			"[F10]       Flickering monitor effect  $f\n"
-			"[F9]        Retro' style ships         $f\n\n"
+			"[F11]                 Burn-in monitor effect     $f\n"
+			"[F10]                 Flickering monitor effect  $f\n"
+			"[F9]                  Retro' style ships         $f\n"
+            "[F8]                  Sounds                     $f\n\n"
 
 			"Game Modifiers:\n"
-			"[F1]        Unlimited projectiles      $f\n"
-			"[F2]        Unlimited fuel             $f\n"
-			"[F3]        Star as central point      $f\n"
-			"[F4]        One shot One kill          $f\n\n",
-			p1jc,
-			p2jc,
+			"[F1]                  Unlimited projectiles      $f\n"
+			"[F2]                  Unlimited fuel             $f\n"
+			"[F3]                  Star as central point      $f\n"
+			"[F4]                  One shot One kill          $f\n"
+            "[F5]                  Number of players          $p\n\n",
+			joystickConfigs[0],
+            joystickConfigs[1],
+            joystickConfigs[2],
+            joystickConfigs[3],
 			burnInMonitorEffect,
 			flickeringMonitorEffect,
 			retroStyleShips,
+            playSounds,
 			!shipProjectilesLimit,
 			!shipFuelLimit,
 			!blackHoleAsAnomaly,
-			oneShotOneKill
+			oneShotOneKill,
+            numPlayers
 		);
 	} else {
-		player1.update(player2, anomaly);
-		player2.update(player1, anomaly);
+        int alive = 0;
+
+        for(size_t i = 0; i < numPlayers; i++) {
+            players[i].update(players, i, anomaly, explosionSound);
+            alive += !players[i].isDead();
+        }
+
+        if(alive <= 1) {
+            for(size_t i = 0; i < numPlayers; i++) {
+                players[i].reset();
+            }
+        }
 	}
 }
 
-void GameEngine::draw() {
+void GameEngine::draw(void) {
 	if(burnInMonitorEffect) {
 		phosphorus.draw(monitor.isRunning());
 	}
@@ -255,8 +296,9 @@ void GameEngine::draw() {
 	if(monitor.isRunning()) {
 		background.draw();
 		anomaly.draw();
-		player1.draw();
-		player2.draw();
+		for(size_t i = 0; i < numPlayers; i++) {
+            players[i].draw();
+        }
 	} else {
 		userInterface.draw();
 	}
@@ -264,7 +306,7 @@ void GameEngine::draw() {
 	monitor.draw();
 }
 
-void GameEngine::gameLoop() {
+void GameEngine::gameLoop(void) {
 	SetTargetFPS(FPS);
 
 	while(!WindowShouldClose()) {
@@ -279,6 +321,4 @@ void GameEngine::gameLoop() {
 
 		EndDrawing();
 	}
-
-    CloseWindow();
 }

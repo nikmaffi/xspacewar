@@ -11,17 +11,21 @@
 
 class GameEngine {
 private:
-	unsigned p1jc, p2jc, p1jid, p2jid;
+	unsigned joystickConfigs[MAX_PLAYERS];
 
 	CRTMonitor monitor;
 	Interface userInterface;
 
 	Background background;
-	Player player1, player2;
+	Player players[MAX_PLAYERS];
 	Anomaly anomaly;
 	Phosphorus phosphorus;
 
+	Sound laserSound;
+	Sound explosionSound;
+
 	void loadData(void);
+	void saveData(void);
 
 	void eventsHandler(void);
 	void update(void);

@@ -21,7 +21,8 @@ fireTimer(.0f),
 hyperspaceTimer(HYPERSPACE_READY),
 projectilesCount(SHIP_MAX_PROJECTILES),
 fuel(SHIP_MAX_FUEL),
-capturedByGravityWell(false) {
+capturedByGravityWell(false),
+dead(false) {
 }
 
 Player::~Player() {
@@ -29,7 +30,7 @@ Player::~Player() {
 	UnloadTexture(laserTexture);
 }
 
-Circle Player::getCircle() const {
+Circle Player::getCircle(void) const {
 	return Circle(pos, sprite.height / 2.f);
 }
 
@@ -37,11 +38,15 @@ bool Player::isCollidingWith(const Circle &other) const {
     return getCircle().overlaps(other);
 }
 
-bool Player::isExploding() const {
+bool Player::isExploding(void) const {
 	return explosionTimer <= WAIT_TIME;
 }
 
-bool Player::isInHyperspace() const {
+bool Player::isDead(void) const {
+	return dead;
+}
+
+bool Player::isInHyperspace(void) const {
 	return hyperspaceTimer > 0.f && hyperspaceTimer <= HYPERSPACE_TIME;
 }
 
@@ -66,6 +71,7 @@ void Player::reset(void) {
 	projectilesCount = oneShotOneKill ? 1 : SHIP_MAX_PROJECTILES;
 	fuel = SHIP_MAX_FUEL;
 	capturedByGravityWell = false;
+	dead = false;
 }
 
 void Player::rotate(float angle) {
@@ -105,7 +111,7 @@ void Player::hyperspace(void) {
 	hyperspaceTimer = HYPERSPACE_TIME;
 }
 
-void Player::shoot() {
+void Player::shoot(const Sound &laserSound) {
 	if(fireTimer > 0 || projectilesCount <= 0 || isExploding() || isInHyperspace()) {
 		return;
 	}
@@ -123,9 +129,15 @@ void Player::shoot() {
             .5f * WINDOW_WIDTH / WSCALE
         )
 	);
+
+	if(playSounds) {
+		PlaySound(laserSound);
+	}
+
+	return;
 }
 
-void Player::update(Player &other, const Anomaly &anomaly) {
+void Player::update(Player *others, size_t self, const Anomaly &anomaly, const Sound &explosionSound) {
 	for(size_t i = 0; i < projectiles.size(); i++) {
 		if(projectiles[i].explosionTimer <= 0) {
 			projectiles.erase(projectiles.begin() + i);
@@ -144,29 +156,46 @@ void Player::update(Player &other, const Anomaly &anomaly) {
 		projectiles[i].move();
 		if(blackHoleAsAnomaly) {
 			projectiles[i].move(anomaly.attract(projectiles[i].mass, projectiles[i].pos));
-		}
+		} 
 
 		if(projectiles[i].isCollapsing()) {
 			projectiles[i].explosionTimer = WAIT_TIME;
-		} else if(projectiles[i].isCollidingWith(other.getCircle()) && !other.isExploding() && !other.isInHyperspace()) {
-			projectiles.erase(projectiles.begin() + i);
-			other.explosionTimer = WAIT_TIME;
 		} else if(projectiles[i].isCollidingWith(anomaly.getCircle())) {
 			projectiles.erase(projectiles.begin() + i);
 		} else {
-			for(size_t j = 0; j < other.projectiles.size(); j++) {
-				if(projectiles[i].isCollidingWith(other.projectiles[j].getCircle())) {
-					projectiles[i].explosionTimer = WAIT_TIME;
-					other.projectiles[j].explosionTimer = WAIT_TIME;
+			for(size_t k = 0; k < numPlayers; k++) {
+				if(k == self || others[k].dead) {
+					continue;
+				}
+
+				if(projectiles[i].isCollidingWith(others[k].getCircle()) && !others[k].isExploding() && !others[k].isInHyperspace()) {
+					projectiles.erase(projectiles.begin() + i);
+					others[k].explosionTimer = WAIT_TIME;
+
+					if(playSounds) {
+						PlaySound(explosionSound);
+					}
+
 					break;
+				} else {
+					for(size_t j = 0; j < others[k].projectiles.size(); j++) {
+						if(projectiles[i].isCollidingWith(others[k].projectiles[j].getCircle()) && !others[k].projectiles[j].isExploding()) {
+							projectiles[i].explosionTimer = WAIT_TIME;
+							others[k].projectiles[j].explosionTimer = WAIT_TIME;
+							break;
+						}
+					}
 				}
 			}
 		}
 	}
 
+	if(dead) {
+		return;
+	}
+
 	if(explosionTimer <= 0) {
-		reset();
-		other.reset();
+		dead = true;
 	} else if(explosionTimer == WAIT_TIME && !capturedByGravityWell) {
         particles.init(pos);
 	} else if(explosionTimer >= LARGE_EXPLOSION_TIME && isExploding() && !capturedByGravityWell) {
@@ -210,10 +239,21 @@ void Player::update(Player &other, const Anomaly &anomaly) {
 		return;
 	}
 
-	if(isCollidingWith(other.getCircle()) && !other.isExploding() && !other.isInHyperspace()) {
-		explosionTimer = WAIT_TIME;
-		other.explosionTimer = WAIT_TIME;
-		return;
+	for(size_t i = 0; i < numPlayers; i++) {
+		if(i == self || others[i].dead) {
+			continue;
+		}
+
+		if(isCollidingWith(others[i].getCircle()) && !others[i].isExploding() && !others[i].isInHyperspace()) {
+			explosionTimer = WAIT_TIME;
+			others[i].explosionTimer = WAIT_TIME;
+
+			if(playSounds) {
+				PlaySound(explosionSound);
+			}
+
+			return;
+		}
 	}
 
 	move(anomaly.attract(mass, pos));
@@ -222,6 +262,10 @@ void Player::update(Player &other, const Anomaly &anomaly) {
 void Player::draw(void) {
 	for(size_t i = 0; i < projectiles.size(); i++) {
 		projectiles[i].draw();
+	}
+
+	if(dead) {
+		return;
 	}
 
 	if(explosionTimer >= LARGE_EXPLOSION_TIME && isExploding() && !capturedByGravityWell) {
@@ -241,10 +285,10 @@ void Player::draw(void) {
 	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
 		flickeringTimer = .0f;
 
-		if(color.a == 185) {
+		if(color.a == FLICKERING_ALPHA) {
 			color.a = 255;
 		} else {
-			color.a = 185;
+			color.a = FLICKERING_ALPHA;
 		}
 	}
 

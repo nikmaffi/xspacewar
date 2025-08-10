@@ -43,7 +43,7 @@ struct GhostInterface {
 
 class Phosphorus {
 private:
-    const Player &player1, &player2;
+    const Player *players;
     const Anomaly &anomaly;
     const Interface &interface;
 
@@ -58,7 +58,7 @@ private:
     void updatePlayerLaser(const Player &player, bool monitorRunning);
     void updatePlayerLaserExplosion(const Player &player, bool monitorRunning);
 public:
-    Phosphorus(const Player &player1, const Player &player2, const Anomaly &anomaly, const Interface &interface);
+    Phosphorus(const Player *players, const Anomaly &anomaly, const Interface &interface);
     void update(bool monitorRunning);
     void draw(bool monitorRunning);
 };

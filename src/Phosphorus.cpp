@@ -45,15 +45,14 @@ fontSize(interface.fontSize),
 timer(100.f) {
 }
 
-Phosphorus::Phosphorus(const Player &player1, const Player &player2, const Anomaly &anomaly, const Interface &interface):
-player1(player1),
-player2(player2),
+Phosphorus::Phosphorus(const Player *players, const Anomaly &anomaly, const Interface &interface):
+players(players),
 anomaly(anomaly),
 interface(interface) {
 }
 
 void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
-    if(monitorRunning) {
+    if(monitorRunning && !player.isExploding() && !player.capturedByGravityWell && !player.isDead()) {
         entitiesPhosphorus.push_back(GhostEntity(player));
     }
 
@@ -71,7 +70,7 @@ void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
 
 void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning) {
     if(monitorRunning && player.explosionTimer >= LARGE_EXPLOSION_TIME && player.isExploding() &&
-    !player.capturedByGravityWell) {
+    !player.capturedByGravityWell && !player.isDead()) {
 		playerExplosionPhosphorus.push_back(GhostParticles(player.particles, LARGE_EXPLOSION_PARTICLES));
 	}
 
@@ -172,17 +171,13 @@ void Phosphorus::update(bool monitorRunning) {
 		interfacePhosphorus[i].color.a = (unsigned char)interfacePhosphorus[i].timer;
 	}
 
-    // Player 1
-    updatePlayer(player1, monitorRunning);
-    updatePlayerExplosion(player1, monitorRunning);
-    updatePlayerLaser(player1, monitorRunning);
-    updatePlayerLaserExplosion(player1, monitorRunning);
-
-    // Player 2
-    updatePlayer(player2, monitorRunning);
-    updatePlayerExplosion(player2, monitorRunning);
-    updatePlayerLaser(player2, monitorRunning);
-    updatePlayerLaserExplosion(player2, monitorRunning);
+    // Players
+    for(size_t i = 0; i < numPlayers; i++) {
+        updatePlayer(players[i], monitorRunning);
+        updatePlayerExplosion(players[i], monitorRunning);
+        updatePlayerLaser(players[i], monitorRunning);
+        updatePlayerLaserExplosion(players[i], monitorRunning);
+    }
 }
 
 void Phosphorus::draw(bool monitorRunning) {

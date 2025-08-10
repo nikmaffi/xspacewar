@@ -84,10 +84,10 @@ void Laser::draw(void) {
 	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
 		flickeringTimer = .0f;
 
-		if(color.a == 185) {
+		if(color.a == FLICKERING_ALPHA) {
 			color.a = 255;
 		} else {
-			color.a = 185;
+			color.a = FLICKERING_ALPHA;
 		}
 	}
 

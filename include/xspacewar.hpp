@@ -14,9 +14,14 @@
 // Globals
 #define JOYSTICK_CONFIGURATIONS 1
 
-// Joystick map [neg trig rotation (%), pos trig rotation (%), turbo, hyperspace, shoot]
-const char joystickMap[JOYSTICK_CONFIGURATIONS][5] = {
-	{0x63, 0x63, 0x0C, 0x0B, 0x08}
+#define NUM_ACTIONS 5
+
+#define MAX_PLAYERS 4
+#define MIN_PLAYERS 2
+
+// Joystick map [turbo, neg trig rotation (%), pos trig rotation (%), shoot, hyperspace]
+const char joystickMap[JOYSTICK_CONFIGURATIONS][NUM_ACTIONS] = {
+	{0x0C, 0x63, 0x63, 0x08, 0x0B}
 	//{0x1D, 0x28, 0x00, 0x04, 0x02},
 	//{0x63, 0x63, 0x03, 0x02, 0x00},
 	//{0x63, 0x63, 0x02, 0x00, 0x03}
@@ -28,13 +33,23 @@ const char* const joystickConfigsNames[JOYSTICK_CONFIGURATIONS] = {
 	//"[XBOX]"
 };
 
-extern bool burnInMonitorEffect;
-extern bool flickeringMonitorEffect;
-extern bool shipProjectilesLimit;
-extern bool shipFuelLimit;
-extern bool blackHoleAsAnomaly;
-extern bool retroStyleShips;
-extern bool oneShotOneKill;
+// Keyboard map [turbo, left, right, shoot, hyperspace]
+const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
+	{KEY_S, KEY_A, KEY_D, KEY_W, KEY_E},
+	{KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_RIGHT_CONTROL},
+	{KEY_G, KEY_F, KEY_H, KEY_T, KEY_Y},
+	{KEY_K, KEY_J, KEY_L, KEY_I, KEY_O},
+};
+
+extern bool   burnInMonitorEffect;
+extern bool   flickeringMonitorEffect;
+extern bool   shipProjectilesLimit;
+extern bool   shipFuelLimit;
+extern bool   blackHoleAsAnomaly;
+extern bool   retroStyleShips;
+extern bool   oneShotOneKill;
+extern bool   playSounds;
+extern size_t numPlayers;
 
 // Graphics Constants
 #define WINDOW_WIDTH ((float)GetMonitorWidth(0))
@@ -57,6 +72,7 @@ extern bool oneShotOneKill;
 #define CRT_MONITOR_COLOR ((Color){34, 42, 22, 255})
 #define EXPLOSION_COLOR WHITE
 #define TEXT_COLOR ((Color){135, 206, 250, 255})
+#define FLICKERING_ALPHA 150
 
 #define SHIP_SPRINT (.0005f * GetFrameTime() * MULTIPLIER * WINDOW_WIDTH / WSCALE)
 #define SHIP_ROTATION_SPEED (1.f * GetFrameTime() * MULTIPLIER)
