@@ -12,6 +12,8 @@
 
 class GameEngine {
 private:
+	Image icon;
+
 	unsigned joystickConfigs[MAX_PLAYERS];
 	JoystickHandler joystickHandler;
 

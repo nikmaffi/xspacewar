@@ -56,6 +56,9 @@ anomaly(
     WINDOW_WIDTH / WSCALE
 ),
 phosphorus(players, anomaly, userInterface) {
+    icon = LoadImage("./res/logo.png");
+    SetWindowIcon(icon);
+
 	loadData();
 
     for(size_t i = 0; i < numPlayers; i++) {
@@ -66,7 +69,10 @@ phosphorus(players, anomaly, userInterface) {
 }
 
 GameEngine::~GameEngine() {
+    UnloadSound(laserSound);
     UnloadSound(explosionSound);
+
+    UnloadImage(icon);
 
     CloseAudioDevice();
     CloseWindow();
