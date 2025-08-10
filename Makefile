@@ -1,7 +1,7 @@
 CC=g++
 DB=gdb
 
-CFLAGS=-Wall -Wextra -Iinclude $(LIBS)
+CFLAGS=-Wall -Wextra -I$(INCLUDE_DIR)
 DEBUG_FLAGS=-g$(DB) -DDEBUG -fsanitize=address
 RELEASE_FLAGS=-O2 -s -DNDEBUG
 
@@ -29,7 +29,7 @@ release: clean
 release: $(BIN)
 
 $(BIN): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
 	rm -rf $(OBJ_DIR)/* $(BIN_DIR)/*
