@@ -6,7 +6,7 @@ monitor("./res/img/monitor.png"),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
     "./res/fonts/VT323.ttf",
-	22 * WINDOW_WIDTH / (unsigned int)WSCALE,
+	22 * WINDOW_WIDTH / WSCALE,
     TEXT_COLOR
 ),
 background("./res/img/space.png"),
@@ -16,28 +16,28 @@ players{
         "./res/img/player_1.png",
         "./res/img/laser.png",
         270.f,
-        .7f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_2.png",
         "./res/img/laser.png",
         90.f,
-        .7f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE
     ),
     Player(
         (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_3.png",
         "./res/img/laser.png",
         90.f,
-        .7f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_4.png",
         "./res/img/laser.png",
         270.f,
-        .7f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE
     )
 },
 anomaly(

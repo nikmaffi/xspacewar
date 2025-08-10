@@ -302,7 +302,7 @@ void Player::draw(void) {
         texture,
         sprite,
         (Rectangle){pos.x, pos.y, sprite.width * scale, sprite.height * scale},
-        (Vector2){sprite.width / 2.f, sprite.height / 2.f},
+        (Vector2){sprite.width * scale / 2.f, sprite.height * scale / 2.f},
         angle,
         color
     );

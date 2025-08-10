@@ -95,7 +95,7 @@ void Laser::draw(void) {
         texture,
         (Rectangle){.0f, .0f, (float)texture.width, (float)texture.height},
         (Rectangle){pos.x, pos.y, texture.width * scale, texture.height * scale},
-        (Vector2){texture.width / 2.f, texture.height / 2.f},
+        (Vector2){texture.width * scale / 2.f, texture.height * scale / 2.f},
         angle,
         color
     );

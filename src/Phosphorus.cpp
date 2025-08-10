@@ -193,8 +193,8 @@ void Phosphorus::draw(bool monitorRunning) {
                 entitiesPhosphorus[i].sprite.height * entitiesPhosphorus[i].scale
             },
             {
-                entitiesPhosphorus[i].sprite.width / 2.f,
-                entitiesPhosphorus[i].sprite.height / 2.f
+                entitiesPhosphorus[i].sprite.width * entitiesPhosphorus[i].scale / 2.f,
+                entitiesPhosphorus[i].sprite.height * entitiesPhosphorus[i].scale / 2.f
             },
             entitiesPhosphorus[i].angle,
             entitiesPhosphorus[i].color
@@ -225,8 +225,8 @@ void Phosphorus::draw(bool monitorRunning) {
                     playerLaserPhosphorus[i][j].sprite.height * playerLaserPhosphorus[i][j].scale
                 },
                 (Vector2){
-                    playerLaserPhosphorus[i][j].sprite.width / 2.f,
-                    playerLaserPhosphorus[i][j].sprite.height / 2.f
+                    playerLaserPhosphorus[i][j].sprite.width * playerLaserPhosphorus[i][j].scale / 2.f,
+                    playerLaserPhosphorus[i][j].sprite.height * playerLaserPhosphorus[i][j].scale / 2.f
                 },
                 playerLaserPhosphorus[i][j].angle,
                 playerLaserPhosphorus[i][j].color
