@@ -1,6 +1,6 @@
 #include <Player.hpp>
 
-Player::Player(const Vector2 &pos, const char *textureRes, const char *laserTextureRes, float angle, float scale) :
+Player::Player(const Vector2 &pos, const char *textureRes, const char *laserTextureRes, float angle, float scale, const Sound &laserSound, const Sound &explosionSound) :
 pos(pos),
 startPos(pos),
 angle(angle),
@@ -16,6 +16,8 @@ flickeringTimer(.0f),
 explosionTimer(WAIT_TIME + 1),
 particles(LARGE_EXPLOSION_PARTICLES, EXPLOSION_COLOR),
 laserTexture(LoadTexture(laserTextureRes)),
+laserSound(laserSound),
+explosionSound(explosionSound),
 sprint(false),
 fireTimer(.0f),
 hyperspaceTimer(HYPERSPACE_READY),
@@ -111,7 +113,7 @@ void Player::hyperspace(void) {
 	hyperspaceTimer = HYPERSPACE_TIME;
 }
 
-void Player::shoot(const Sound &laserSound) {
+void Player::shoot(void) {
 	if(fireTimer > 0 || projectilesCount <= 0 || isExploding() || isInHyperspace()) {
 		return;
 	}
@@ -137,7 +139,7 @@ void Player::shoot(const Sound &laserSound) {
 	return;
 }
 
-void Player::update(Player *others, size_t self, const Anomaly &anomaly, const Sound &explosionSound) {
+void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 	for(size_t i = 0; i < projectiles.size(); i++) {
 		if(projectiles[i].explosionTimer <= 0) {
 			projectiles.erase(projectiles.begin() + i);

@@ -4,15 +4,12 @@
 #include <raylib.h>
 
 #include <vector>
-#include <random>
 #include <cmath>
+#include <random>
 #include <fstream>
-#include <cstdarg>
-#include <ctime>
-#include <iomanip>
 
 // Globals
-#define JOYSTICK_CONFIGURATIONS 1
+#define JOYSTICK_CONFIGURATIONS 3
 
 #define NUM_ACTIONS 5
 
@@ -20,17 +17,15 @@
 #define MIN_PLAYERS 2
 
 // Joystick map [turbo, neg trig rotation (%), pos trig rotation (%), shoot, hyperspace]
-const char joystickMap[JOYSTICK_CONFIGURATIONS][NUM_ACTIONS] = {
-	{0x0C, 0x63, 0x63, 0x08, 0x0B}
-	//{0x1D, 0x28, 0x00, 0x04, 0x02},
-	//{0x63, 0x63, 0x03, 0x02, 0x00},
-	//{0x63, 0x63, 0x02, 0x00, 0x03}
+const int joystickMap[JOYSTICK_CONFIGURATIONS][NUM_ACTIONS] = {
+	{0x09,  4000,  4000, 0x02, 0x03}, // PlayStation 4/5
+	{0x02, 10000, 10000, 0x00, 0x04}, // Logitech WingMan
+	{0x04,  4000,  4000, 0x03, 0x00}  // Controller USB
 };
 const char* const joystickConfigsNames[JOYSTICK_CONFIGURATIONS] = {
-	"[PS4 ]"
-	//"[MONO]",
-	//"[DUAL]",
-	//"[XBOX]"
+	"[PLAYSTATION]",
+	"[WINGMAN    ]",
+	"[GENERIC USB]"
 };
 
 // Keyboard map [turbo, left, right, shoot, hyperspace]

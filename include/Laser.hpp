@@ -28,7 +28,7 @@ private:
 
 	float dispersion;
 public:
-	Laser(const Vector2 &pos, const Texture &texture, float angle, float scale = 1.f);
+	Laser(const Vector2 &pos, const Texture &texture, float angle, float scale);
 	Laser(const Laser &laser);
 	Laser &operator=(const Laser &laser);
 	bool isExploding(void) const;

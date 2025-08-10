@@ -3,8 +3,6 @@
 
 #include <xspacewar.hpp>
 
-#include <string>
-
 class GhostInterface;
 
 class Interface {

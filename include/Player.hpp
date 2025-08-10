@@ -37,6 +37,9 @@ private:
 
 	Texture laserTexture;
 
+	Sound laserSound;
+	Sound explosionSound;
+
 	bool sprint;
 	float fireTimer;
 	float hyperspaceTimer;
@@ -46,7 +49,7 @@ private:
 	bool capturedByGravityWell;
 	bool dead;
 public:
-	Player(const Vector2 &pos, const char *textureRes, const char *laserTextureRes, float angle = 0.f, float scale = 1.f);
+	Player(const Vector2 &pos, const char *textureRes, const char *laserTextureRes, float angle, float scale, const Sound &laserSound, const Sound &explosionSound);
 	~Player();
 	Circle getCircle(void) const;
 	bool isCollidingWith(const Circle &other) const;
@@ -59,8 +62,8 @@ public:
 	void move(float step);
 	void move(const Vector2 &acc);
 	void hyperspace(void);
-	void shoot(const Sound &laserSound);
-	void update(Player *others, size_t self, const Anomaly &anomaly, const Sound &explosionSound);
+	void shoot(void);
+	void update(Player *others, size_t self, const Anomaly &anomaly);
 	void draw(void);
 
 	friend class Phosphorus;

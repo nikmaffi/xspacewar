@@ -8,10 +8,15 @@
 #include <Anomaly.hpp>
 #include <Player.hpp>
 #include <Interface.hpp>
+#include <JoystickHandler.hpp>
 
 class GameEngine {
 private:
 	unsigned joystickConfigs[MAX_PLAYERS];
+	JoystickHandler joystickHandler;
+
+	Sound laserSound;
+	Sound explosionSound;
 
 	CRTMonitor monitor;
 	Interface userInterface;
@@ -20,9 +25,6 @@ private:
 	Player players[MAX_PLAYERS];
 	Anomaly anomaly;
 	Phosphorus phosphorus;
-
-	Sound laserSound;
-	Sound explosionSound;
 
 	void loadData(void);
 	void saveData(void);

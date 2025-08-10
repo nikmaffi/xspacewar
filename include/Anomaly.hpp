@@ -23,7 +23,7 @@ private:
 	std::random_device rd;
 	std::uniform_real_distribution<float> dist;
 public:
-	Anomaly(const Vector2 &pos, const char *textureRes, float scale = 1.f);
+	Anomaly(const Vector2 &pos, const char *textureRes, float scale);
 	~Anomaly();
 	const Vector2 &getPosition(void) const;
 	Circle getCircle(void) const;

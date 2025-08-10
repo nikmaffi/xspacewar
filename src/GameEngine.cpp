@@ -2,6 +2,8 @@
 
 GameEngine::GameEngine(void) :
 joystickConfigs {0, 0, 0, 0},
+laserSound(LoadSound("./res/audio/laser.wav")),
+explosionSound(LoadSound("./res/audio/explosion.wav")),
 monitor("./res/img/monitor.png"),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
@@ -16,28 +18,36 @@ players{
         "./res/img/player_1.png",
         "./res/img/laser.png",
         270.f,
-        .8f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE,
+        laserSound,
+        explosionSound
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_2.png",
         "./res/img/laser.png",
         90.f,
-        .8f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE,
+        laserSound,
+        explosionSound
     ),
     Player(
         (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_3.png",
         "./res/img/laser.png",
         90.f,
-        .8f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE,
+        laserSound,
+        explosionSound
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
         "./res/img/player_4.png",
         "./res/img/laser.png",
         270.f,
-        .8f * WINDOW_WIDTH / WSCALE
+        .8f * WINDOW_WIDTH / WSCALE,
+        laserSound,
+        explosionSound
     )
 },
 anomaly(
@@ -45,9 +55,7 @@ anomaly(
     "./res/img/anomaly.png",
     WINDOW_WIDTH / WSCALE
 ),
-phosphorus(players, anomaly, userInterface),
-laserSound(LoadSound("./res/audio/laser.wav")),
-explosionSound(LoadSound("./res/audio/explosion.wav")) {
+phosphorus(players, anomaly, userInterface) {
 	loadData();
 
     for(size_t i = 0; i < numPlayers; i++) {
@@ -59,7 +67,6 @@ explosionSound(LoadSound("./res/audio/explosion.wav")) {
 
 GameEngine::~GameEngine() {
     UnloadSound(explosionSound);
-    UnloadSound(laserSound);
 
     CloseAudioDevice();
     CloseWindow();
@@ -108,6 +115,8 @@ void GameEngine::saveData(void) {
 }
 
 void GameEngine::eventsHandler(void) {
+    joystickHandler.handler(players, joystickConfigs);
+
     if(IsKeyPressed(KEY_ENTER)) {
         if(monitor.isRunning()) {
             for(size_t i = 0; i < numPlayers; i++) {
@@ -196,23 +205,23 @@ void GameEngine::eventsHandler(void) {
         }
     } else {
         for(size_t i = 0; i < numPlayers; i++) {
-            if(IsKeyDown(keyboardMap[i][0]) || IsGamepadButtonDown(i, joystickMap[joystickConfigs[i]][0])) {
+            if(IsKeyDown(keyboardMap[i][0])) {
                 players[i].move(SHIP_SPRINT);
             }
 
-            if(IsKeyDown(keyboardMap[i][1]) || GetGamepadAxisMovement(i, 0) < -joystickMap[joystickConfigs[i]][1] / 100.f) {
+            if(IsKeyDown(keyboardMap[i][1])) {
                 players[i].rotate(-SHIP_ROTATION_SPEED);
             }
 
-            if(IsKeyDown(keyboardMap[i][2]) || GetGamepadAxisMovement(i, 0) > joystickMap[joystickConfigs[i]][2] / 100.f) {
+            if(IsKeyDown(keyboardMap[i][2])) {
                 players[i].rotate(SHIP_ROTATION_SPEED);
             }
 
-            if(IsKeyPressed(keyboardMap[i][3]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][3])) {
-                players[i].shoot(laserSound);
+            if(IsKeyPressed(keyboardMap[i][3])) {
+                players[i].shoot();
             }
 
-            if(IsKeyPressed(keyboardMap[i][4]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][4])) {
+            if(IsKeyPressed(keyboardMap[i][4])) {
                 players[i].hyperspace();
             }
         }
@@ -241,10 +250,10 @@ void GameEngine::update(void) {
 			"[E] [CANC]  [Y] [O]   Hyperspace\n\n"
 
 			"Joystick Configuration:\n"
-			"[1]                   Player 1                $j\n"
-			"[2]                   Player 2                $j\n"
-            "[3]                   Player 3                $j\n"
-            "[4]                   Player 4                $j\n\n"
+			"[1]                   Player 1         $j\n"
+			"[2]                   Player 2         $j\n"
+            "[3]                   Player 3         $j\n"
+            "[4]                   Player 4         $j\n\n"
 
 			"Appearance:\n"
 			"[F11]                 Burn-in monitor effect     $f\n"
@@ -276,7 +285,7 @@ void GameEngine::update(void) {
         int alive = 0;
 
         for(size_t i = 0; i < numPlayers; i++) {
-            players[i].update(players, i, anomaly, explosionSound);
+            players[i].update(players, i, anomaly);
             alive += !players[i].isDead();
         }
 
