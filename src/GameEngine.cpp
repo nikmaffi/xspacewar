@@ -7,7 +7,7 @@ monitor("./res/img/monitor.png"),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
     "./res/fonts/VT323.ttf",
-	22 * WINDOW_WIDTH / WSCALE,
+	24 * WINDOW_WIDTH / WSCALE,
     TEXT_COLOR
 ),
 background("./res/img/space.png"),
