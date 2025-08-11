@@ -36,6 +36,7 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 	{KEY_K, KEY_J, KEY_L, KEY_I, KEY_O},
 };
 
+// Global parameters
 extern bool   burnInMonitorEffect;
 extern bool   flickeringMonitorEffect;
 extern bool   shipProjectilesLimit;
@@ -62,6 +63,7 @@ extern size_t numPlayers;
 #define MULTIPLIER 60.f
 #define FLICKER_FRAME_INTERVAL .08f
 
+// Colors (RGBA)
 #define BACKGROUND_COLOR ((Color){34, 34, 34, 255})
 #define PHOSPHORUS_COLOR(alpha) ((Color){139, 180, 60, alpha})
 #define CRT_MONITOR_COLOR ((Color){34, 42, 22, 255})
