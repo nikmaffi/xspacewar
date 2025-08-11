@@ -8,14 +8,12 @@
 #include <Anomaly.hpp>
 #include <Player.hpp>
 #include <Interface.hpp>
-#include <JoystickHandler.hpp>
 
 class GameEngine {
 private:
 	Image icon;
 
 	unsigned joystickConfigs[MAX_PLAYERS];
-	JoystickHandler joystickHandler;
 
 	Sound laserSound;
 	Sound explosionSound;

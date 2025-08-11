@@ -9,7 +9,7 @@
 #include <fstream>
 
 // Globals
-#define JOYSTICK_CONFIGURATIONS 3
+#define JOYSTICK_CONFIGURATIONS 1
 
 #define NUM_ACTIONS 5
 
@@ -18,14 +18,12 @@
 
 // Joystick map [turbo, neg trig rotation (%), pos trig rotation (%), shoot, hyperspace]
 const int joystickMap[JOYSTICK_CONFIGURATIONS][NUM_ACTIONS] = {
-	{0x09,  4000,  4000, 0x02, 0x03}, // PlayStation 4/5
-	{0x02, 10000, 10000, 0x00, 0x04}, // Logitech WingMan
-	{0x04,  4000,  4000, 0x03, 0x00}  // Controller USB
+	{0x0C, 0x63, 0x63, 0x08, 0x0B} // PlayStation 4/5
 };
 const char* const joystickConfigsNames[JOYSTICK_CONFIGURATIONS] = {
-	"[PLAYSTATION]",
-	"[WINGMAN    ]",
-	"[GENERIC USB]"
+	"[PLAYSTATION]"
+	//"[WINGMAN    ]",
+	//"[GENERIC USB]"
 };
 
 // Keyboard map [turbo, left, right, shoot, hyperspace]

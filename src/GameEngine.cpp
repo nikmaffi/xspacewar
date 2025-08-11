@@ -121,8 +121,6 @@ void GameEngine::saveData(void) {
 }
 
 void GameEngine::eventsHandler(void) {
-    joystickHandler.handler(players, joystickConfigs);
-
     if(IsKeyPressed(KEY_ENTER)) {
         if(monitor.isRunning()) {
             for(size_t i = 0; i < numPlayers; i++) {
@@ -211,23 +209,23 @@ void GameEngine::eventsHandler(void) {
         }
     } else {
         for(size_t i = 0; i < numPlayers; i++) {
-            if(IsKeyDown(keyboardMap[i][0])) {
+            if(IsKeyDown(keyboardMap[i][0]) || IsGamepadButtonDown(i, joystickMap[joystickConfigs[i]][0])) {
                 players[i].move(SHIP_SPRINT);
             }
 
-            if(IsKeyDown(keyboardMap[i][1])) {
+            if(IsKeyDown(keyboardMap[i][1]) || GetGamepadAxisMovement(i, 0) < -joystickMap[joystickConfigs[i]][1] / 100.f) {
                 players[i].rotate(-SHIP_ROTATION_SPEED);
             }
 
-            if(IsKeyDown(keyboardMap[i][2])) {
+            if(IsKeyDown(keyboardMap[i][2]) || GetGamepadAxisMovement(i, 0) > joystickMap[joystickConfigs[i]][2] / 100.f) {
                 players[i].rotate(SHIP_ROTATION_SPEED);
             }
 
-            if(IsKeyPressed(keyboardMap[i][3])) {
+            if(IsKeyPressed(keyboardMap[i][3]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][3])) {
                 players[i].shoot();
             }
 
-            if(IsKeyPressed(keyboardMap[i][4])) {
+            if(IsKeyPressed(keyboardMap[i][4]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][4])) {
                 players[i].hyperspace();
             }
         }

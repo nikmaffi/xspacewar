@@ -12,7 +12,7 @@ INCLUDE_DIR=include
 
 SRCS=$(wildcard $(SRC_DIR)/*.cpp)
 OBJS=$(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
-LIBS=$(addprefix -l, raylib GL m pthread dl rt X11 SDL2)
+LIBS=$(addprefix -l, raylib GL m pthread dl rt X11)
 
 BIN=$(BIN_DIR)/xspacewar
 
