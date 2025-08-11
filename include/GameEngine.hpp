@@ -13,8 +13,6 @@ class GameEngine {
 private:
 	Image icon;
 
-	unsigned joystickConfigs[MAX_PLAYERS];
-
 	Sound laserSound;
 	Sound explosionSound;
 

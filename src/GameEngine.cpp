@@ -1,7 +1,6 @@
 #include <GameEngine.hpp>
 
 GameEngine::GameEngine(void) :
-joystickConfigs {0, 0, 0, 0},
 laserSound(LoadSound("./res/audio/laser.wav")),
 explosionSound(LoadSound("./res/audio/explosion.wav")),
 monitor("./res/img/monitor.png"),
@@ -83,19 +82,15 @@ GameEngine::~GameEngine() {
 void GameEngine::loadData(void) {
 	std::ifstream stream("./data/data.bin", std::ios::binary);
 
-	stream.read((char*)&burnInMonitorEffect, sizeof(bool));
-	stream.read((char*)&flickeringMonitorEffect, sizeof(bool));
-	stream.read((char*)&shipProjectilesLimit, sizeof(bool));
-	stream.read((char*)&shipFuelLimit, sizeof(bool));
-	stream.read((char*)&blackHoleAsAnomaly, sizeof(bool));
-	stream.read((char*)&retroStyleShips, sizeof(bool));
-	stream.read((char*)&oneShotOneKill, sizeof(bool));
-    stream.read((char*)&playSounds, sizeof(bool));
-    stream.read((char*)&numPlayers, sizeof(int));
-
-	for(size_t i = 0; i < MAX_PLAYERS; i++) {
-        stream.read((char *)(joystickConfigs + i), sizeof(unsigned));
-    }
+	stream.read((char *)&burnInMonitorEffect, sizeof(bool));
+	stream.read((char *)&flickeringMonitorEffect, sizeof(bool));
+	stream.read((char *)&shipProjectilesLimit, sizeof(bool));
+	stream.read((char *)&shipFuelLimit, sizeof(bool));
+	stream.read((char *)&blackHoleAsAnomaly, sizeof(bool));
+	stream.read((char *)&retroStyleShips, sizeof(bool));
+	stream.read((char *)&oneShotOneKill, sizeof(bool));
+    stream.read((char *)&playSounds, sizeof(bool));
+    stream.read((char *)&numPlayers, sizeof(int));
 
 	stream.close();
 }
@@ -103,19 +98,15 @@ void GameEngine::loadData(void) {
 void GameEngine::saveData(void) {
     std::ofstream stream("./data/data.bin", std::ios::binary);
 
-	stream.write((char*)&burnInMonitorEffect, sizeof(bool));
-	stream.write((char*)&flickeringMonitorEffect, sizeof(bool));
-	stream.write((char*)&shipProjectilesLimit, sizeof(bool));
-	stream.write((char*)&shipFuelLimit, sizeof(bool));
-	stream.write((char*)&blackHoleAsAnomaly, sizeof(bool));
-	stream.write((char*)&retroStyleShips, sizeof(bool));
-	stream.write((char*)&oneShotOneKill, sizeof(bool));
-    stream.write((char*)&playSounds, sizeof(bool));
-    stream.write((char*)&numPlayers, sizeof(int));
-
-    for(size_t i = 0; i < MAX_PLAYERS; i++) {
-        stream.write((char *)(joystickConfigs + i), sizeof(unsigned));
-    }
+	stream.write((char *)&burnInMonitorEffect, sizeof(bool));
+	stream.write((char *)&flickeringMonitorEffect, sizeof(bool));
+	stream.write((char *)&shipProjectilesLimit, sizeof(bool));
+	stream.write((char *)&shipFuelLimit, sizeof(bool));
+	stream.write((char *)&blackHoleAsAnomaly, sizeof(bool));
+	stream.write((char *)&retroStyleShips, sizeof(bool));
+	stream.write((char *)&oneShotOneKill, sizeof(bool));
+    stream.write((char *)&playSounds, sizeof(bool));
+    stream.write((char *)&numPlayers, sizeof(int));
 
 	stream.close();
 }
@@ -134,22 +125,6 @@ void GameEngine::eventsHandler(void) {
     }
 
     if(!monitor.isRunning()) {
-        if(IsKeyPressed(KEY_ONE)) {
-            joystickConfigs[0] = (joystickConfigs[0] + 1) % JOYSTICK_CONFIGURATIONS;
-        }
-
-        if(IsKeyPressed(KEY_TWO)) {
-            joystickConfigs[1] = (joystickConfigs[1] + 1) % JOYSTICK_CONFIGURATIONS;
-        }
-
-        if(IsKeyPressed(KEY_THREE)) {
-            joystickConfigs[2] = (joystickConfigs[2] + 1) % JOYSTICK_CONFIGURATIONS;
-        }
-
-        if(IsKeyPressed(KEY_FOUR)) {
-            joystickConfigs[3] = (joystickConfigs[3] + 1) % JOYSTICK_CONFIGURATIONS;
-        }
-
         if(IsKeyPressed(KEY_F11)) {
             burnInMonitorEffect = !burnInMonitorEffect;
         }
@@ -209,24 +184,24 @@ void GameEngine::eventsHandler(void) {
         }
     } else {
         for(size_t i = 0; i < numPlayers; i++) {
-            if(IsKeyDown(keyboardMap[i][0]) || IsGamepadButtonDown(i, joystickMap[joystickConfigs[i]][0])) {
+            if(IsKeyDown(keyboardMap[i][0])) {
                 players[i].move(SHIP_SPRINT);
             }
 
-            if(IsKeyDown(keyboardMap[i][1]) || GetGamepadAxisMovement(i, 0) < -joystickMap[joystickConfigs[i]][1] / 100.f) {
-                players[i].rotate(-SHIP_ROTATION_SPEED);
-            }
-
-            if(IsKeyDown(keyboardMap[i][2]) || GetGamepadAxisMovement(i, 0) > joystickMap[joystickConfigs[i]][2] / 100.f) {
-                players[i].rotate(SHIP_ROTATION_SPEED);
-            }
-
-            if(IsKeyPressed(keyboardMap[i][3]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][3])) {
+            if(IsKeyPressed(keyboardMap[i][1])) {
                 players[i].shoot();
             }
 
-            if(IsKeyPressed(keyboardMap[i][4]) || IsGamepadButtonPressed(i, joystickMap[joystickConfigs[i]][4])) {
+            if(IsKeyPressed(keyboardMap[i][2])) {
                 players[i].hyperspace();
+            }
+
+            if(IsKeyDown(keyboardMap[i][3])) {
+                players[i].rotate(-SHIP_ROTATION_SPEED);
+            }
+
+            if(IsKeyDown(keyboardMap[i][4])) {
+                players[i].rotate(SHIP_ROTATION_SPEED);
             }
         }
     }
@@ -238,53 +213,43 @@ void GameEngine::update(void) {
 	}
 
 	if(!monitor.isRunning()) {
-		userInterface.update(
-			"                     XSPACEWAR!               \n"
-			"                  by Nicolo' Maffi             \n\n"
+        userInterface.update(
+            "                     XSPACEWAR!\n"
+            "                  by Nicolo' Maffi\n\n"
 
-			"System Keys:\n"
-			"[ENTER]               Start/Reset game\n"
-			"[ESC]                 Quit\n\n"
+            "System Keys:\n"
+            "[ENTER]               Start/Reset game\n"
+            "[ESC]                 Quit\n\n"
 
-			"Spaceship Keys:\n"
-			"[W] [UP]    [T] [I]   Shoot\n"
-			"[S] [DOWN]  [G] [K]   Turbo\n"
-			"[A] [LEFT]  [F] [J]   Left rotation\n"
-			"[D] [RIGHT] [H] [L]   Right rotation\n"
-			"[E] [CANC]  [Y] [O]   Hyperspace\n\n"
+            "Spaceship Keys:\n"
+            "[W] [UP]    [T] [I]   Shoot\n"
+            "[S] [DOWN]  [G] [K]   Turbo\n"
+            "[A] [LEFT]  [F] [J]   Left rotation\n"
+            "[D] [RIGHT] [H] [L]   Right rotation\n"
+            "[E] [RCTRL] [Y] [O]   Hyperspace\n\n"
 
-			"Joystick Configuration:\n"
-			"[1]                   Player 1         $j\n"
-			"[2]                   Player 2         $j\n"
-            "[3]                   Player 3         $j\n"
-            "[4]                   Player 4         $j\n\n"
-
-			"Appearance:\n"
-			"[F11]                 Burn-in monitor effect     $f\n"
-			"[F10]                 Flickering monitor effect  $f\n"
-			"[F9]                  Retro' style ships         $f\n"
+            "Appearance:\n"
+            "[F11]                 Burn-in monitor effect     $f\n"
+            "[F10]                 Flickering monitor effect  $f\n"
+            "[F9]                  Retro' style ships         $f\n"
             "[F8]                  Sounds                     $f\n\n"
 
-			"Game Modifiers:\n"
-			"[F1]                  Unlimited projectiles      $f\n"
-			"[F2]                  Unlimited fuel             $f\n"
-			"[F3]                  Star as central point      $f\n"
-			"[F4]                  One shot One kill          $f\n"
+            "Game Modifiers:\n"
+            "[F1]                  Unlimited projectiles      $f\n"
+            "[F2]                  Unlimited fuel             $f\n"
+            "[F3]                  Star as central point      $f\n"
+            "[F4]                  One shot One kill          $f\n"
             "[F5]                  Number of players          $p\n\n",
-			joystickConfigs[0],
-            joystickConfigs[1],
-            joystickConfigs[2],
-            joystickConfigs[3],
-			burnInMonitorEffect,
-			flickeringMonitorEffect,
-			retroStyleShips,
+            burnInMonitorEffect,
+            flickeringMonitorEffect,
+            retroStyleShips,
             playSounds,
-			!shipProjectilesLimit,
-			!shipFuelLimit,
-			!blackHoleAsAnomaly,
-			oneShotOneKill,
+            !shipProjectilesLimit,
+            !shipFuelLimit,
+            !blackHoleAsAnomaly,
+            oneShotOneKill,
             numPlayers
-		);
+        );
 	} else {
         int alive = 0;
 

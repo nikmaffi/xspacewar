@@ -31,10 +31,10 @@ void Interface::update(const char *str, ...) {
             text += '$';
         } else if(*k == 'f') {
             text += (va_arg(args, int) ? "[X]" : "[ ]");
-        } else if(*k == 'j') {
-            text += joystickConfigsNames[va_arg(args, int)];
         } else if(*k == 'p') {
             text += "[" + std::to_string(va_arg(args, int)) += "]";
+        } else if(*k == 'n') {
+            text += std::to_string(va_arg(args, int));
         }
     }
 

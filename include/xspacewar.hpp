@@ -8,31 +8,10 @@
 #include <random>
 #include <fstream>
 
-// Globals
-#define JOYSTICK_CONFIGURATIONS 1
-
 #define NUM_ACTIONS 5
 
 #define MAX_PLAYERS 4
 #define MIN_PLAYERS 2
-
-// Joystick map [turbo, neg trig rotation (%), pos trig rotation (%), shoot, hyperspace]
-const int joystickMap[JOYSTICK_CONFIGURATIONS][NUM_ACTIONS] = {
-	{0x0C, 0x63, 0x63, 0x08, 0x0B} // PlayStation 4/5
-};
-const char* const joystickConfigsNames[JOYSTICK_CONFIGURATIONS] = {
-	"[PLAYSTATION]"
-	//"[WINGMAN    ]",
-	//"[GENERIC USB]"
-};
-
-// Keyboard map [turbo, left, right, shoot, hyperspace]
-const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
-	{KEY_S, KEY_A, KEY_D, KEY_W, KEY_E},
-	{KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_RIGHT_CONTROL},
-	{KEY_G, KEY_F, KEY_H, KEY_T, KEY_Y},
-	{KEY_K, KEY_J, KEY_L, KEY_I, KEY_O},
-};
 
 // Global parameters
 extern bool   burnInMonitorEffect;
@@ -44,6 +23,14 @@ extern bool   retroStyleShips;
 extern bool   oneShotOneKill;
 extern bool   playSounds;
 extern size_t numPlayers;
+
+// Keyboard map [turbo, shoot, hyperspace, left, right]
+const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
+	{KEY_S, KEY_W, KEY_E, KEY_A, KEY_D},
+	{KEY_DOWN, KEY_UP, KEY_RIGHT_CONTROL, KEY_LEFT, KEY_RIGHT},
+	{KEY_G, KEY_T, KEY_Y, KEY_F, KEY_H},
+	{KEY_K, KEY_I, KEY_O, KEY_J, KEY_L},
+};
 
 // Graphics Constants
 #define WINDOW_WIDTH ((float)GetMonitorWidth(0))
@@ -69,6 +56,7 @@ extern size_t numPlayers;
 #define TEXT_COLOR ((Color){135, 206, 250, 255})
 #define FLICKERING_ALPHA 150
 
+// Players constants
 #define SHIP_SPRINT (.0005f * GetFrameTime() * MULTIPLIER * WINDOW_WIDTH / WSCALE)
 #define SHIP_ROTATION_SPEED (1.f * GetFrameTime() * MULTIPLIER)
 #define SHIP_MAX_PROJECTILES 30
@@ -83,6 +71,7 @@ extern size_t numPlayers;
 #define HYPERSPACE_RELOADING (HYPERSPACE_TIME + 1)
 #define HYPERSPACE_READY (HYPERSPACE_RELOADING + 10)
 
+// Explosions constants
 #define PARTICLE_VELOCITY (3.1f * GetFrameTime() * MULTIPLIER * WINDOW_WIDTH / WSCALE)
 #define WAIT_TIME 5.f
 #define LARGE_EXPLOSION_TIME (WAIT_TIME - .43f)
