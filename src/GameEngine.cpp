@@ -1,21 +1,21 @@
 #include <GameEngine.hpp>
 
 GameEngine::GameEngine(void) :
-laserSound(LoadSound("./res/audio/laser.wav")),
-explosionSound(LoadSound("./res/audio/explosion.wav")),
-monitor("./res/img/monitor.png"),
+laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
+explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
+monitor((gamePath + "/res/img/monitor.png").c_str()),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
-    "./res/fonts/VT323.ttf",
+    (gamePath + "/res/fonts/VT323.ttf").c_str(),
 	24 * WINDOW_WIDTH / WSCALE,
     TEXT_COLOR
 ),
-background("./res/img/space.png"),
+background((gamePath + "/res/img/space.png").c_str()),
 players{
     Player(
         (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
-        "./res/img/player_1.png",
-        "./res/img/laser.png",
+        (gamePath + "/res/img/player_1.png").c_str(),
+        (gamePath + "/res/img/laser.png").c_str(),
         270.f,
         .8f * WINDOW_WIDTH / WSCALE,
         laserSound,
@@ -23,8 +23,8 @@ players{
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
-        "./res/img/player_2.png",
-        "./res/img/laser.png",
+        (gamePath + "/res/img/player_2.png").c_str(),
+        (gamePath + "/res/img/laser.png").c_str(),
         90.f,
         .8f * WINDOW_WIDTH / WSCALE,
         laserSound,
@@ -32,8 +32,8 @@ players{
     ),
     Player(
         (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
-        "./res/img/player_3.png",
-        "./res/img/laser.png",
+        (gamePath + "/res/img/player_3.png").c_str(),
+        (gamePath + "/res/img/laser.png").c_str(),
         90.f,
         .8f * WINDOW_WIDTH / WSCALE,
         laserSound,
@@ -41,8 +41,8 @@ players{
     ),
     Player(
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
-        "./res/img/player_4.png",
-        "./res/img/laser.png",
+        (gamePath + "/res/img/player_4.png").c_str(),
+        (gamePath + "/res/img/laser.png").c_str(),
         270.f,
         .8f * WINDOW_WIDTH / WSCALE,
         laserSound,
@@ -51,11 +51,11 @@ players{
 },
 anomaly(
     (Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
-    "./res/img/anomaly.png",
+    (gamePath + "/res/img/anomaly.png").c_str(),
     WINDOW_WIDTH / WSCALE
 ),
 phosphorus(players, anomaly, userInterface) {
-    icon = LoadImage("./res/logo.png");
+    icon = LoadImage((gamePath + "/res/logo.png").c_str());
     SetWindowIcon(icon);
 
 	loadData();
@@ -137,15 +137,15 @@ void GameEngine::eventsHandler(void) {
             retroStyleShips = !retroStyleShips;
 
             if (retroStyleShips) {
-                players[0].reloadTextures("./res/img/player_1.png", "./res/img/laser.png");
-                players[1].reloadTextures("./res/img/player_2.png", "./res/img/laser.png");
-                players[2].reloadTextures("./res/img/player_3.png", "./res/img/laser.png");
-                players[3].reloadTextures("./res/img/player_4.png", "./res/img/laser.png");
+                players[0].reloadTextures((gamePath + "/res/img/player_1.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
+                players[1].reloadTextures((gamePath + "/res/img/player_2.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
+                players[2].reloadTextures((gamePath + "/res/img/player_3.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
+                players[3].reloadTextures((gamePath + "/res/img/player_4.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
             } else {
-                players[0].reloadTextures("./res/img/blue_player.png", "./res/img/blue_laser.png");
-                players[1].reloadTextures("./res/img/red_player.png", "./res/img/red_laser.png");
-                players[2].reloadTextures("./res/img/player_empire.png", "./res/img/green_laser.png");
-                players[3].reloadTextures("./res/img/player_rebellion.png", "./res/img/magenta_laser.png");
+                players[0].reloadTextures((gamePath + "/res/img/blue_player.png").c_str(), (gamePath + "/res/img/blue_laser.png").c_str());
+                players[1].reloadTextures((gamePath + "/res/img/red_player.png").c_str(), (gamePath + "/res/img/red_laser.png").c_str());
+                players[2].reloadTextures((gamePath + "/res/img/player_empire.png").c_str(), (gamePath + "/res/img/green_laser.png").c_str());
+                players[3].reloadTextures((gamePath + "/res/img/player_rebellion.png").c_str(), (gamePath + "/res/img/magenta_laser.png").c_str());
             }
         }
 

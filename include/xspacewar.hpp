@@ -24,6 +24,9 @@ extern bool   oneShotOneKill;
 extern bool   playSounds;
 extern size_t numPlayers;
 
+// Used for locating game resources
+extern std::string gamePath;
+
 // Keyboard map [turbo, shoot, hyperspace, left, right]
 const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 	{KEY_S, KEY_W, KEY_E, KEY_A, KEY_D},

@@ -12,7 +12,13 @@ void initWindow(void) {
     InitWindow(w, h, "XSpacewar!");
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
+    if(argc != 2) {
+        gamePath = ".";
+    } else if(argc == 2) {
+        gamePath = argv[1];
+    }
+
     initWindow();
     InitAudioDevice();
 

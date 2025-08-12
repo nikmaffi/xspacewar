@@ -10,3 +10,5 @@ bool   retroStyleShips = true;
 bool   oneShotOneKill = false;
 bool   playSounds = false;
 size_t numPlayers = 2;
+
+std::string gamePath = ".";
