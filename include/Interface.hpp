@@ -3,7 +3,7 @@
 
 #include <xspacewar.hpp>
 
-class GhostInterface;
+struct GhostInterface;
 
 class Interface {
 private:
@@ -22,7 +22,7 @@ public:
 	void update(const char *str, ...);
 	void draw(void);
 
-	friend class GhostInterface;
+	friend struct GhostInterface;
 };
 
 #endif //__INTERFACE_HPP__

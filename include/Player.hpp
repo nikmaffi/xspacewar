@@ -8,8 +8,8 @@
 #include <Particles.hpp>
 
 class Phosphorus;
-class GhostEntity;
-class GhostParticles;
+struct GhostEntity;
+struct GhostParticles;
 
 class Player {
 private:
@@ -67,8 +67,8 @@ public:
 	void draw(void);
 
 	friend class Phosphorus;
-	friend class GhostEntity;
-	friend class GhostParticles;
+	friend struct GhostEntity;
+	friend struct GhostParticles;
 };
 
 #endif //__PLAYER_HPP__

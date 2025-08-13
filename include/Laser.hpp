@@ -7,8 +7,8 @@
 
 class Player;
 class Phosphorus;
-class GhostEntity;
-class GhostParticles;
+struct GhostEntity;
+struct GhostParticles;
 
 class Laser {
 private:
@@ -41,8 +41,8 @@ public:
 
 	friend class Player;
 	friend class Phosphorus;
-	friend class GhostEntity;
-	friend class GhostParticles;
+	friend struct GhostEntity;
+	friend struct GhostParticles;
 };
 
 #endif //__LASER_HPP__

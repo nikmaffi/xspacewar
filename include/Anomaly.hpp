@@ -4,7 +4,7 @@
 #include <xspacewar.hpp>
 #include <Circle.hpp>
 
-class GhostEntity;
+struct GhostEntity;
 
 class Anomaly {
 private:
@@ -31,7 +31,7 @@ public:
 	Vector2 attract(float mass, const Vector2 &pos) const;
 	void draw(void);
 
-	friend class GhostEntity;
+	friend struct GhostEntity;
 };
 
 #endif //__ANOMALY_HPP__

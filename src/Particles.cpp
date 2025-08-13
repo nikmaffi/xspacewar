@@ -20,7 +20,6 @@ Particles &Particles::operator=(const Particles &p) {
     size = p.size;
     flickeringTimer = p.flickeringTimer;
     color = p.color;
-	dist = dist;
 
     return *this;
 }

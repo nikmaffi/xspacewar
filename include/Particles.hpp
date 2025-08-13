@@ -3,7 +3,7 @@
 
 #include <xspacewar.hpp>
 
-class GhostParticles;
+struct GhostParticles;
 
 class Particles {
 private:
@@ -24,7 +24,7 @@ public:
     void expandBy(float factor);
     void draw(void);
 
-    friend class GhostParticles;
+    friend struct GhostParticles;
 };
 
 #endif //__PARTICLES_HPP__
