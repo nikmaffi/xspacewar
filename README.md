@@ -21,7 +21,7 @@ Players can enable or disable visual effects that emulate old CRT monitors, incl
 
 These effects are designed to evoke a nostalgic atmosphere and can be toggled in the game settings.
 
-👉 [Play XSpacewar! Online](https://username.github.io/xspacewar)
+👉 [Play XSpacewar! Online](https://nikmaffi.github.io/xspacewar/xspacewar.html)
 ![Gameplay GIF](assets/gameplay.gif)  
 
 
