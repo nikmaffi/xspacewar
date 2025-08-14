@@ -125,15 +125,15 @@ void GameEngine::eventsHandler(void) {
     }
 
     if(!monitor.isRunning()) {
-        if(IsKeyPressed(KEY_F11)) {
+        if(IsKeyPressed(KEY_ONE)) {
             burnInMonitorEffect = !burnInMonitorEffect;
         }
 
-        if(IsKeyPressed(KEY_F10)) {
+        if(IsKeyPressed(KEY_TWO)) {
             flickeringMonitorEffect = !flickeringMonitorEffect;
         }
 
-        if(IsKeyPressed(KEY_F9)) {
+        if(IsKeyPressed(KEY_THREE)) {
             retroStyleShips = !retroStyleShips;
 
             if (retroStyleShips) {
@@ -149,27 +149,27 @@ void GameEngine::eventsHandler(void) {
             }
         }
 
-        if(IsKeyPressed(KEY_F8)) {
+        if(IsKeyPressed(KEY_FOUR)) {
             playSounds = !playSounds;
         }
 
-        if(IsKeyPressed(KEY_F1)) {
+        if(IsKeyPressed(KEY_L)) {
             shipProjectilesLimit = !shipProjectilesLimit;
 
 			oneShotOneKill = false;
         }
 
-        if(IsKeyPressed(KEY_F2)) {
+        if(IsKeyPressed(KEY_F)) {
             shipFuelLimit = !shipFuelLimit;
         }
 
-        if(IsKeyPressed(KEY_F3)) {
+        if(IsKeyPressed(KEY_S)) {
             blackHoleAsAnomaly = !blackHoleAsAnomaly;
 
             anomaly.changeAnomaly();
         }
 
-        if(IsKeyPressed(KEY_F4)) {
+        if(IsKeyPressed(KEY_K)) {
             oneShotOneKill = !oneShotOneKill;
 
             shipProjectilesLimit = true;
@@ -179,7 +179,7 @@ void GameEngine::eventsHandler(void) {
             }
         }
 
-        if(IsKeyPressed(KEY_F5)) {
+        if(IsKeyPressed(KEY_P)) {
             numPlayers = (numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
         }
     } else {
@@ -214,8 +214,8 @@ void GameEngine::update(void) {
 
 	if(!monitor.isRunning()) {
         userInterface.update(
-            "                     XSPACEWAR!\n"
-            "                  by Nicolo' Maffi\n\n"
+            "                    XSPACEWAR!\n"
+            "                 by Nicolo' Maffi\n\n"
 
             "System Keys:\n"
             "[ENTER]               Start/Reset game\n"
@@ -229,17 +229,17 @@ void GameEngine::update(void) {
             "[E] [RCTRL] [Y] [O]   Hyperspace\n\n"
 
             "Appearance:\n"
-            "[F11]                 Burn-in monitor effect     $f\n"
-            "[F10]                 Flickering monitor effect  $f\n"
-            "[F9]                  Retro' style ships         $f\n"
-            "[F8]                  Sounds                     $f\n\n"
+            "[1]                 Burn-in monitor effect     $f\n"
+            "[2]                 Flickering monitor effect  $f\n"
+            "[3]                 Retro' style ships         $f\n"
+            "[4]                 Sounds                     $f\n\n"
 
             "Game Modifiers:\n"
-            "[F1]                  Unlimited projectiles      $f\n"
-            "[F2]                  Unlimited fuel             $f\n"
-            "[F3]                  Star as central point      $f\n"
-            "[F4]                  One shot One kill          $f\n"
-            "[F5]                  Number of players          $p\n\n",
+            "[L]                  Unlimited projectiles     $f\n"
+            "[F]                  Unlimited fuel            $f\n"
+            "[S]                  Star as central point     $f\n"
+            "[K]                  One shot One kill         $f\n"
+            "[P]                  Number of players         $p\n\n",
             burnInMonitorEffect,
             flickeringMonitorEffect,
             retroStyleShips,
