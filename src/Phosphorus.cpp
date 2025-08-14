@@ -7,7 +7,7 @@ texture(player.texture),
 sprite(player.sprite),
 color(PHOSPHORUS_COLOR(255)),
 scale(player.scale),
-timer(255.f) {
+timer(PHOSPHORUS_BIG_TIMER) {
 }
 
 GhostEntity::GhostEntity(const Laser &laser):
@@ -17,7 +17,7 @@ texture(laser.texture),
 sprite((Rectangle){.0f, .0f, (float)laser.texture.width, (float)laser.texture.height}),
 color(PHOSPHORUS_COLOR(255)),
 scale(laser.scale),
-timer(255.f) {
+timer(PHOSPHORUS_BIG_TIMER) {
 }
 
 GhostEntity::GhostEntity(const Anomaly &anomaly):
@@ -27,13 +27,13 @@ texture(anomaly.texture),
 sprite(anomaly.sprite),
 color(PHOSPHORUS_COLOR(255)),
 scale(anomaly.scale),
-timer(100.f) {
+timer(PHOSPHORUS_SMALL_TIMER) {
 }
 
 GhostParticles::GhostParticles(const Particles &particles, size_t size):
 pos(particles.pos, particles.pos + size),
 color(PHOSPHORUS_COLOR(255)),
-timer(255.f) {
+timer(PHOSPHORUS_BIG_TIMER) {
 }
 
 GhostInterface::GhostInterface(const Interface &interface):
@@ -42,7 +42,7 @@ color(PHOSPHORUS_COLOR(255)),
 text(interface.text),
 font(interface.font),
 fontSize(interface.fontSize),
-timer(100.f) {
+timer(PHOSPHORUS_SMALL_TIMER) {
 }
 
 Phosphorus::Phosphorus(const Player *players, const Anomaly &anomaly, const Interface &interface):
@@ -57,7 +57,7 @@ void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
     }
 
     for(size_t i = 0; i < entitiesPhosphorus.size(); i++) {
-        entitiesPhosphorus[i].timer -= GetFrameTime() * 15.f;
+        entitiesPhosphorus[i].timer -= GetFrameTime() * PLAYER_P_DT_MULTIPLIER;
 
         if(entitiesPhosphorus[i].timer <= .0f) {
             entitiesPhosphorus.erase(entitiesPhosphorus.begin() + i);
@@ -69,13 +69,13 @@ void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
 }
 
 void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning) {
-    if(monitorRunning && player.explosionTimer >= LARGE_EXPLOSION_TIME && player.isExploding() &&
+    if(monitorRunning && player.explosionTimer >= EXPLOSION_LARGE_TIME && player.isExploding() &&
     !player.capturedByGravityWell && !player.isDead()) {
-		playerExplosionPhosphorus.push_back(GhostParticles(player.particles, LARGE_EXPLOSION_PARTICLES));
+		playerExplosionPhosphorus.push_back(GhostParticles(player.particles, EXPLOSION_LARGE_PARTICLES));
 	}
 
 	for(size_t i = 0; i < playerExplosionPhosphorus.size(); i++) {
-		playerExplosionPhosphorus[i].timer -= GetFrameTime() * MULTIPLIER;
+		playerExplosionPhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
 
 		if(playerExplosionPhosphorus[i].timer <= 0) {
 			playerExplosionPhosphorus.erase(playerExplosionPhosphorus.begin() + i);
@@ -99,7 +99,7 @@ void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
 
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserPhosphorus[i].size(); j++) {
-            playerLaserPhosphorus[i][j].timer -= GetFrameTime() * MULTIPLIER;
+            playerLaserPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
 
             if(playerLaserPhosphorus[i][j].timer <= .0f) {
                 playerLaserPhosphorus[i].erase(playerLaserPhosphorus[i].begin() + j);
@@ -122,17 +122,17 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
     }
 
 	for(size_t i = 0; i < player.projectiles.size(); i++) {
-		if(monitorRunning && player.projectiles[i].explosionTimer >= SMALL_EXPLOSION_TIME &&
+		if(monitorRunning && player.projectiles[i].explosionTimer >= EXPLOSION_SMALL_TIME &&
             player.projectiles[i].isExploding()) {
 			playerLaserExplosionPhosphorus[i].push_back(
-                GhostParticles(player.projectiles[i].particles, SMALL_EXPLOSION_PARTICLES)
+                GhostParticles(player.projectiles[i].particles, EXPLOSION_SMALL_PARTICLES)
             );
 		}
 	}
 
     for(size_t i = 0; i < playerLaserExplosionPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserExplosionPhosphorus[i].size(); j++) {
-            playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * MULTIPLIER;
+            playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
 
             if(playerLaserExplosionPhosphorus[i][j].timer <= .0f) {
                 playerLaserExplosionPhosphorus[i].erase(playerLaserExplosionPhosphorus[i].begin() + j);
@@ -161,7 +161,7 @@ void Phosphorus::update(bool monitorRunning) {
 	}
 
 	for(size_t i = 0; i < interfacePhosphorus.size(); i++) {
-		interfacePhosphorus[i].timer -= GetFrameTime() * MULTIPLIER;
+		interfacePhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
 
 		if(interfacePhosphorus[i].timer <= 0) {
 			interfacePhosphorus.erase(interfacePhosphorus.begin());
@@ -203,7 +203,7 @@ void Phosphorus::draw(bool monitorRunning) {
 
     // Player explosion
     for(size_t i = 0; i < playerExplosionPhosphorus.size(); i++) {
-		for(size_t j = 0; j < LARGE_EXPLOSION_PARTICLES; j++) {
+		for(size_t j = 0; j < EXPLOSION_LARGE_PARTICLES; j++) {
             DrawPixel(
                 playerExplosionPhosphorus[i].pos[j].x,
                 playerExplosionPhosphorus[i].pos[j].y,
@@ -237,7 +237,7 @@ void Phosphorus::draw(bool monitorRunning) {
     //Player projectiles explosion
     for(size_t i = 0; i < playerLaserExplosionPhosphorus.size(); i++) {
 		for(size_t j = 0; j < playerLaserExplosionPhosphorus[i].size(); j++) {
-            for(size_t k = 0; k < SMALL_EXPLOSION_PARTICLES; k++) {
+            for(size_t k = 0; k < EXPLOSION_SMALL_PARTICLES; k++) {
                 DrawPixel(
                     playerLaserExplosionPhosphorus[i][j].pos[k].x,
                     playerLaserExplosionPhosphorus[i][j].pos[k].y,

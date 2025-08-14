@@ -6,23 +6,23 @@ startPos(pos),
 angle(angle),
 startAngle(angle),
 vel((Vector2){0.f, 0.f}),
-mass(5.f),
+mass(PLAYER_MASS),
 texture(LoadTexture(textureRes)),
 sprite((Rectangle){0.f, texture.height / 2.f, (float)texture.width, texture.height / 2.f}),
 color(WHITE),
 scale(scale),
 dist(-1.f, 1.f),
 flickeringTimer(.0f),
-explosionTimer(WAIT_TIME + 1),
-particles(LARGE_EXPLOSION_PARTICLES, EXPLOSION_COLOR),
+explosionTimer(EXPLOSION_WAIT_TIME + 1),
+particles(EXPLOSION_LARGE_PARTICLES, EXPLOSION_COLOR),
 laserTexture(LoadTexture(laserTextureRes)),
 laserSound(laserSound),
 explosionSound(explosionSound),
 sprint(false),
 fireTimer(.0f),
-hyperspaceTimer(HYPERSPACE_READY),
-projectilesCount(SHIP_MAX_PROJECTILES),
-fuel(SHIP_MAX_FUEL),
+hyperspaceTimer(PLAYER_HYPERSPACE_READY),
+projectilesCount(PLAYER_MAX_PROJECTILES),
+fuel(PLAYER_MAX_FUEL),
 capturedByGravityWell(false),
 dead(false) {
 }
@@ -41,7 +41,7 @@ bool Player::isCollidingWith(const Circle &other) const {
 }
 
 bool Player::isExploding(void) const {
-	return explosionTimer <= WAIT_TIME;
+	return explosionTimer <= EXPLOSION_WAIT_TIME;
 }
 
 bool Player::isDead(void) const {
@@ -49,7 +49,7 @@ bool Player::isDead(void) const {
 }
 
 bool Player::isInHyperspace(void) const {
-	return hyperspaceTimer > 0.f && hyperspaceTimer <= HYPERSPACE_TIME;
+	return hyperspaceTimer > 0.f && hyperspaceTimer <= PLAYER_HYPERSPACE_TIME;
 }
 
 void Player::reloadTextures(const char *playerTextureRes, const char *laserTextureRes) {
@@ -66,12 +66,12 @@ void Player::reset(void) {
 	vel = (Vector2){0.f, 0.f};
 	projectiles.clear();
 	flickeringTimer = .0f;
-	explosionTimer = WAIT_TIME + 1;
+	explosionTimer = EXPLOSION_WAIT_TIME + 1;
 	sprint = false;
 	fireTimer = .0f;
-	hyperspaceTimer = HYPERSPACE_READY;
-	projectilesCount = oneShotOneKill ? 1 : SHIP_MAX_PROJECTILES;
-	fuel = SHIP_MAX_FUEL;
+	hyperspaceTimer = PLAYER_HYPERSPACE_READY;
+	projectilesCount = oneShotOneKill ? 1 : PLAYER_MAX_PROJECTILES;
+	fuel = PLAYER_MAX_FUEL;
 	capturedByGravityWell = false;
 	dead = false;
 }
@@ -94,23 +94,23 @@ void Player::move(float step) {
 	sprint = true;
 	fuel -= 1 * shipFuelLimit;
 
-	move((Vector2){std::cos(angle * DEG_TO_RAD) * step, std::sin(angle * DEG_TO_RAD) * step});
+	move((Vector2){std::cos(angle * DEG2RAD) * step, std::sin(angle * DEG2RAD) * step});
 }
 
 void Player::move(const Vector2 &acc) {
 	vel.x += acc.x;
     vel.y += acc.y;
 
-	pos.x += vel.x * GetFrameTime() * MULTIPLIER;
-    pos.y += vel.y * GetFrameTime() * MULTIPLIER;
+	pos.x += vel.x * GetFrameTime() * DT_MULTIPLIER;
+    pos.y += vel.y * GetFrameTime() * DT_MULTIPLIER;
 }
 
 void Player::hyperspace(void) {
-	if(isExploding() || isInHyperspace() || hyperspaceTimer < HYPERSPACE_READY) {
+	if(isExploding() || isInHyperspace() || hyperspaceTimer < PLAYER_HYPERSPACE_READY) {
 		return;
 	}
 
-	hyperspaceTimer = HYPERSPACE_TIME;
+	hyperspaceTimer = PLAYER_HYPERSPACE_TIME;
 }
 
 void Player::shoot(void) {
@@ -118,17 +118,17 @@ void Player::shoot(void) {
 		return;
 	}
 
-	fireTimer = FIRE_TIME;
+	fireTimer = PLAYER_FIRE_TIME;
 	projectilesCount -= 1 * shipProjectilesLimit;
 
 	float dist = sprite.height / 2;
 
 	projectiles.push_back(
 		Laser(
-            (Vector2){pos.x + dist * std::cos(angle * DEG_TO_RAD), pos.y + dist * std::sin(angle * DEG_TO_RAD)},
+            (Vector2){pos.x + dist * std::cos(angle * DEG2RAD), pos.y + dist * std::sin(angle * DEG2RAD)},
             laserTexture,
             angle,
-            .5f * WINDOW_WIDTH / WSCALE
+            LASER_TEX_SCALE
         )
 	);
 
@@ -144,10 +144,10 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		if(projectiles[i].explosionTimer <= 0) {
 			projectiles.erase(projectiles.begin() + i);
 			continue;
-		} else if(projectiles[i].explosionTimer == WAIT_TIME) {
+		} else if(projectiles[i].explosionTimer == EXPLOSION_WAIT_TIME) {
             projectiles[i].particles.init(projectiles[i].pos);
-		} else if(projectiles[i].explosionTimer >= SMALL_EXPLOSION_TIME && projectiles[i].isExploding()) {
-			projectiles[i].particles.expandBy(PARTICLE_VELOCITY);
+		} else if(projectiles[i].explosionTimer >= EXPLOSION_SMALL_TIME && projectiles[i].isExploding()) {
+			projectiles[i].particles.expandBy(EXPLOSION_PARTICLE_VELOCITY);
 		}
 
 		if(projectiles[i].isExploding()) {
@@ -161,7 +161,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		} 
 
 		if(projectiles[i].isCollapsing()) {
-			projectiles[i].explosionTimer = WAIT_TIME;
+			projectiles[i].explosionTimer = EXPLOSION_WAIT_TIME;
 		} else if(projectiles[i].isCollidingWith(anomaly.getCircle())) {
 			projectiles.erase(projectiles.begin() + i);
 		} else {
@@ -172,7 +172,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 
 				if(projectiles[i].isCollidingWith(others[k].getCircle()) && !others[k].isExploding() && !others[k].isInHyperspace()) {
 					projectiles.erase(projectiles.begin() + i);
-					others[k].explosionTimer = WAIT_TIME;
+					others[k].explosionTimer = EXPLOSION_WAIT_TIME;
 
 					if(playSounds) {
 						PlaySound(explosionSound);
@@ -182,8 +182,8 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 				} else {
 					for(size_t j = 0; j < others[k].projectiles.size(); j++) {
 						if(projectiles[i].isCollidingWith(others[k].projectiles[j].getCircle()) && !others[k].projectiles[j].isExploding()) {
-							projectiles[i].explosionTimer = WAIT_TIME;
-							others[k].projectiles[j].explosionTimer = WAIT_TIME;
+							projectiles[i].explosionTimer = EXPLOSION_WAIT_TIME;
+							others[k].projectiles[j].explosionTimer = EXPLOSION_WAIT_TIME;
 							break;
 						}
 					}
@@ -198,10 +198,10 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 
 	if(explosionTimer <= 0) {
 		dead = true;
-	} else if(explosionTimer == WAIT_TIME && !capturedByGravityWell) {
+	} else if(explosionTimer == EXPLOSION_WAIT_TIME && !capturedByGravityWell) {
         particles.init(pos);
-	} else if(explosionTimer >= LARGE_EXPLOSION_TIME && isExploding() && !capturedByGravityWell) {
-		particles.expandBy(PARTICLE_VELOCITY);
+	} else if(explosionTimer >= EXPLOSION_LARGE_TIME && isExploding() && !capturedByGravityWell) {
+		particles.expandBy(EXPLOSION_PARTICLE_VELOCITY);
 	}
 
 	if(isExploding()) {
@@ -217,27 +217,27 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		hyperspaceTimer -= GetFrameTime();
 		return;
 	} else if(hyperspaceTimer <= 0.f) {
-		float diff = MONITOR_RADIUS * std::sin(PI / 4);
+		float diff = VT_MONITOR_RADIUS * std::sin(PI / 4);
 
 		pos.x = WINDOW_CENTER_X + dist(rd) * diff;
 		pos.y = WINDOW_CENTER_Y + dist(rd) * diff;
 
 		vel.x = vel.y = 0.f;
 
-		hyperspaceTimer = HYPERSPACE_RELOADING;
-	} else if(hyperspaceTimer >= HYPERSPACE_RELOADING && hyperspaceTimer < HYPERSPACE_READY) {
+		hyperspaceTimer = PLAYER_HYPERSPACE_RELOADING;
+	} else if(hyperspaceTimer >= PLAYER_HYPERSPACE_RELOADING && hyperspaceTimer < PLAYER_HYPERSPACE_READY) {
 		hyperspaceTimer += GetFrameTime();
 	}
 
 	float dist = (float)std::sqrt(std::pow(pos.x - WINDOW_CENTER_X, 2) + std::pow(pos.y - WINDOW_CENTER_Y, 2));
 
-	if(dist > MONITOR_RADIUS) {
+	if(dist > VT_MONITOR_RADIUS) {
 		pos = (Vector2){WINDOW_CENTER_X - (pos.x - WINDOW_CENTER_X), WINDOW_CENTER_Y - (pos.y - WINDOW_CENTER_Y)};
 	}
 
 	if(isCollidingWith(anomaly.getCircle())) {
 		capturedByGravityWell = true;
-		explosionTimer = WAIT_TIME;
+		explosionTimer = EXPLOSION_WAIT_TIME;
 		return;
 	}
 
@@ -247,8 +247,8 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		}
 
 		if(isCollidingWith(others[i].getCircle()) && !others[i].isExploding() && !others[i].isInHyperspace()) {
-			explosionTimer = WAIT_TIME;
-			others[i].explosionTimer = WAIT_TIME;
+			explosionTimer = EXPLOSION_WAIT_TIME;
+			others[i].explosionTimer = EXPLOSION_WAIT_TIME;
 
 			if(playSounds) {
 				PlaySound(explosionSound);
@@ -270,7 +270,7 @@ void Player::draw(void) {
 		return;
 	}
 
-	if(explosionTimer >= LARGE_EXPLOSION_TIME && isExploding() && !capturedByGravityWell) {
+	if(explosionTimer >= EXPLOSION_LARGE_TIME && isExploding() && !capturedByGravityWell) {
 		particles.draw();
 	}
 
@@ -284,7 +284,7 @@ void Player::draw(void) {
 
 	flickeringTimer += GetFrameTime() * flickeringMonitorEffect;
 
-	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
+	if(flickeringTimer >= FLICKERING_INTERVAL) {
 		flickeringTimer = .0f;
 
 		if(color.a == FLICKERING_ALPHA) {

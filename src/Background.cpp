@@ -14,7 +14,7 @@ Background::~Background() {
 void Background::draw(void) {
 	flickeringTimer += GetFrameTime() * flickeringMonitorEffect;
 
-	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
+	if(flickeringTimer >= FLICKERING_INTERVAL) {
 		flickeringTimer = .0f;
 		
 		if(color.a == FLICKERING_ALPHA) {

@@ -3,18 +3,18 @@
 Laser::Laser(const Vector2 &pos, const Texture &texture, float angle, float scale):
 pos(pos),
 angle(angle),
-vel((Vector2){LASER_SPEED * std::cos(angle * DEG_TO_RAD), LASER_SPEED * std::sin(angle * DEG_TO_RAD)}),
-mass(7.f),
+vel((Vector2){LASER_SPEED * std::cos(angle * DEG2RAD), LASER_SPEED * std::sin(angle * DEG2RAD)}),
+mass(LASER_MASS),
 texture(texture),
 scale(scale),
 flickeringTimer(.0f),
 color(WHITE),
-explosionTimer(WAIT_TIME + 1),
-particles(SMALL_EXPLOSION_PARTICLES, EXPLOSION_COLOR),
+explosionTimer(EXPLOSION_WAIT_TIME + 1),
+particles(EXPLOSION_SMALL_PARTICLES, EXPLOSION_COLOR),
 dispersion(LASER_ENERGY) {
 }
 
-Laser::Laser(const Laser &laser): particles(SMALL_EXPLOSION_PARTICLES, EXPLOSION_COLOR) {
+Laser::Laser(const Laser &laser): particles(EXPLOSION_SMALL_PARTICLES, EXPLOSION_COLOR) {
 	*this = laser;
 }
 
@@ -34,7 +34,7 @@ Laser& Laser::operator=(const Laser &laser) {
 }
 
 bool Laser::isExploding(void) const {
-	return explosionTimer <= WAIT_TIME;
+	return explosionTimer <= EXPLOSION_WAIT_TIME;
 }
 
 Circle Laser::getCircle(void) const {
@@ -54,7 +54,7 @@ void Laser::move(void) {
 
 	float dist = (float)std::sqrt(std::pow(pos.x - WINDOW_CENTER_X, 2) + std::pow(pos.y - WINDOW_CENTER_Y, 2));
 
-	if(dist > MONITOR_RADIUS) {
+	if(dist > VT_MONITOR_RADIUS) {
 		pos = (Vector2){WINDOW_CENTER_X - (pos.x - WINDOW_CENTER_X), WINDOW_CENTER_Y - (pos.y - WINDOW_CENTER_Y)};
 	}
 
@@ -71,7 +71,7 @@ void Laser::move(const Vector2 &acc) {
 }
 
 void Laser::draw(void) {
-	if(explosionTimer >= SMALL_EXPLOSION_TIME && isExploding()) {
+	if(explosionTimer >= EXPLOSION_SMALL_TIME && isExploding()) {
 		particles.draw();
 	}
 
@@ -81,7 +81,7 @@ void Laser::draw(void) {
 
 	flickeringTimer += GetFrameTime() * flickeringMonitorEffect;
 
-	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
+	if(flickeringTimer >= FLICKERING_INTERVAL) {
 		flickeringTimer = .0f;
 
 		if(color.a == FLICKERING_ALPHA) {

@@ -41,7 +41,7 @@ void Particles::expandBy(float factor) {
 }
 
 void Particles::draw(void) {
-    if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
+    if(flickeringTimer >= FLICKERING_INTERVAL) {
         flickeringTimer = .0f;
 
         if(color.a == FLICKERING_ALPHA) {

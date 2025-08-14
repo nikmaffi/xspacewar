@@ -5,28 +5,28 @@ laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
 monitor((gamePath + "/res/fonts/GoogleSansCode.ttf").c_str()),
 userInterface(
-	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
+	UI_POS,
     (gamePath + "/res/fonts/VT323.ttf").c_str(),
-	24 * WINDOW_WIDTH / WSCALE,
-    TEXT_COLOR
+	UI_FONT_SIZE * WINDOW_WIDTH / WSCALE,
+    UI_TEXT_COLOR
 ),
 background((gamePath + "/res/img/space.png").c_str()),
 players{
     Player(
-        (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
+        PLAYER_1_START_POS,
         (gamePath + "/res/img/player_1.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
-        270.f,
-        .8f * WINDOW_WIDTH / WSCALE,
+        PLAYER_1_START_ANGLE,
+        PLAYER_TEX_SCALE,
         laserSound,
         explosionSound
     ),
     Player(
-        (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
+        PLAYER_2_START_POS,
         (gamePath + "/res/img/player_2.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
-        90.f,
-        .8f * WINDOW_WIDTH / WSCALE,
+        PLAYER_2_START_ANGLE,
+        PLAYER_TEX_SCALE,
         laserSound,
         explosionSound
     ),
@@ -34,8 +34,8 @@ players{
         (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
         (gamePath + "/res/img/player_3.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
-        90.f,
-        .8f * WINDOW_WIDTH / WSCALE,
+        PLAYER_3_START_ANGLE,
+        PLAYER_TEX_SCALE,
         laserSound,
         explosionSound
     ),
@@ -43,14 +43,14 @@ players{
         (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
         (gamePath + "/res/img/player_4.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
-        270.f,
-        .8f * WINDOW_WIDTH / WSCALE,
+        PLAYER_4_START_ANGLE,
+        PLAYER_TEX_SCALE,
         laserSound,
         explosionSound
     )
 },
 anomaly(
-    (Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
+    ANOMALY_POS,
     (gamePath + "/res/img/anomaly.png").c_str(),
     WINDOW_WIDTH / WSCALE
 ),
@@ -185,7 +185,7 @@ void GameEngine::eventsHandler(void) {
     } else {
         for(size_t i = 0; i < numPlayers; i++) {
             if(IsKeyDown(keyboardMap[i][0])) {
-                players[i].move(SHIP_SPRINT);
+                players[i].move(PLAYER_SPRINT);
             }
 
             if(IsKeyPressed(keyboardMap[i][1])) {
@@ -197,11 +197,11 @@ void GameEngine::eventsHandler(void) {
             }
 
             if(IsKeyDown(keyboardMap[i][3])) {
-                players[i].rotate(-SHIP_ROTATION_SPEED);
+                players[i].rotate(-PLAYER_ROTATION_SPEED);
             }
 
             if(IsKeyDown(keyboardMap[i][4])) {
-                players[i].rotate(SHIP_ROTATION_SPEED);
+                players[i].rotate(PLAYER_ROTATION_SPEED);
             }
         }
     }
@@ -214,8 +214,8 @@ void GameEngine::update(void) {
 
 	if(!monitor.isRunning()) {
         userInterface.update(
-            "                    XSPACEWAR!\n"
-            "                 by Nicolo' Maffi\n\n"
+            "                     XSPACEWAR!\n"
+            "                  by Nicolo' Maffi\n\n"
 
             "System Keys:\n"
             "[ENTER]               Start/Reset game\n"
@@ -229,17 +229,17 @@ void GameEngine::update(void) {
             "[E] [RCTRL] [Y] [O]   Hyperspace\n\n"
 
             "Appearance:\n"
-            "[1]                 Burn-in monitor effect     $f\n"
-            "[2]                 Flickering monitor effect  $f\n"
-            "[3]                 Retro' style ships         $f\n"
-            "[4]                 Sounds                     $f\n\n"
+            "[1]                   Burn-in monitor effect     $f\n"
+            "[2]                   Flickering monitor effect  $f\n"
+            "[3]                   Retro' style ships         $f\n"
+            "[4]                   Sounds                     $f\n\n"
 
             "Game Modifiers:\n"
-            "[L]                  Unlimited projectiles     $f\n"
-            "[F]                  Unlimited fuel            $f\n"
-            "[S]                  Star as central point     $f\n"
-            "[K]                  One shot One kill         $f\n"
-            "[P]                  Number of players         $p\n\n",
+            "[L]                   Unlimited projectiles      $f\n"
+            "[F]                   Unlimited fuel             $f\n"
+            "[S]                   Star as anomaly            $f\n"
+            "[K]                   One shot One kill          $f\n"
+            "[P]                   Number of players          $p\n\n",
             burnInMonitorEffect,
             flickeringMonitorEffect,
             retroStyleShips,
@@ -293,7 +293,7 @@ void GameEngine::gameLoop(void) {
 		update();
 
 		BeginDrawing();
-        ClearBackground(CRT_MONITOR_COLOR);
+        ClearBackground(VT_MONITOR_COLOR);
 
 		draw();
 

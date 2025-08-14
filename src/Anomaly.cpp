@@ -2,7 +2,7 @@
 
 Anomaly::Anomaly(const Vector2 &pos, const char *textureRes, float scale):
 pos(pos),
-mass(1e12),
+mass(ANOMALY_MASS),
 angle(.0f),
 texture(LoadTexture(textureRes)),
 sprite((Rectangle){.0f, .0f, (float)texture.width, texture.height / 2.f}),
@@ -38,15 +38,15 @@ Vector2 Anomaly::attract(float mass, const Vector2 &pos) const {
 	float forceMag = G * this->mass * mass / (distMag * distMag * distMag);
 
 	return (Vector2){
-        (forceMag * dist.x / mass) * GetFrameTime() * MULTIPLIER,
-        (forceMag * dist.y / mass) * GetFrameTime() * MULTIPLIER
+        (forceMag * dist.x / mass) * GetFrameTime() * DT_MULTIPLIER,
+        (forceMag * dist.y / mass) * GetFrameTime() * DT_MULTIPLIER
     };
 }
 
 void Anomaly::draw(void) {
 	flickeringTimer += GetFrameTime() * flickeringMonitorEffect;
 
-	if(flickeringTimer >= FLICKER_FRAME_INTERVAL) {
+	if(flickeringTimer >= FLICKERING_INTERVAL) {
 		flickeringTimer = .0f;
 
 		if(color.a == FLICKERING_ALPHA) {

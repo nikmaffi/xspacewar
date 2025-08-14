@@ -7,6 +7,8 @@ class CRTMonitor {
 private:
 	bool running;
 	Font font;
+
+	Vector2 trademarkSize;
 public:
 	CRTMonitor(const char *fontRes);
 	~CRTMonitor();
