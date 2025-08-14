@@ -6,9 +6,9 @@
 class CRTMonitor {
 private:
 	bool running;
-	Texture texture;
+	Font font;
 public:
-	CRTMonitor(const char *textureRes);
+	CRTMonitor(const char *fontRes);
 	~CRTMonitor();
 	bool isRunning(void) const;
 	void powerOn(void);

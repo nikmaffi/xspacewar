@@ -3,7 +3,7 @@
 GameEngine::GameEngine(void) :
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
-monitor((gamePath + "/res/img/monitor.png").c_str()),
+monitor((gamePath + "/res/fonts/GoogleSansCode.ttf").c_str()),
 userInterface(
 	(Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y},
     (gamePath + "/res/fonts/VT323.ttf").c_str(),

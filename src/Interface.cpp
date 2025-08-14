@@ -4,7 +4,7 @@ Interface::Interface(const Vector2 &pos, const char *fontRes, unsigned int size,
 pos(pos),
 color(color),
 text(""),
-font(LoadFont(fontRes)),
+font(LoadFontEx(fontRes, size, 0, 0)),
 fontSize(size),
 flickeringTimer(.0f) {
 }
