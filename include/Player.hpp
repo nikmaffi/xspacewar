@@ -18,7 +18,6 @@ private:
 	float angle;
 	float startAngle;
 	Vector2 vel;
-	float mass;
 
 	Texture texture;
 	Rectangle sprite;

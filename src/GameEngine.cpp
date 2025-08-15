@@ -31,7 +31,7 @@ players{
         explosionSound
     ),
     Player(
-        (Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE},
+        PLAYER_3_START_POS,
         (gamePath + "/res/img/player_3.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
         PLAYER_3_START_ANGLE,
@@ -40,7 +40,7 @@ players{
         explosionSound
     ),
     Player(
-        (Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE , WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE},
+        PLAYER_4_START_POS,
         (gamePath + "/res/img/player_4.png").c_str(),
         (gamePath + "/res/img/laser.png").c_str(),
         PLAYER_4_START_ANGLE,

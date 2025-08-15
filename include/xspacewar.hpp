@@ -19,6 +19,7 @@
 
 // Math
 #define G 6.67428e-11
+#define EPSILON 1e-3
 
 
 
@@ -84,6 +85,8 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define EXPLOSION_LARGE_PARTICLES 100
 #define EXPLOSION_SMALL_PARTICLES 20
 
+
+
 // ########################################################################################################################################
 // PHOSPHORUS
 // ########################################################################################################################################
@@ -145,7 +148,6 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define PLAYER_4_START_ANGLE 270.f
 
 // Attributes
-#define PLAYER_MASS 5.f
 #define PLAYER_TEX_SCALE (.8f * WINDOW_WIDTH / WSCALE)
 
 
@@ -160,7 +162,6 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define LASER_DISPERSION_RATE (.18f * GetFrameTime() * DT_MULTIPLIER)
 
 // Attributes
-#define LASER_MASS 7.f
 #define LASER_TEX_SCALE (.5f * WINDOW_WIDTH / WSCALE)
 
 

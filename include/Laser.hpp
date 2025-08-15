@@ -15,7 +15,6 @@ private:
 	Vector2 pos;
 	float angle;
 	Vector2 vel;
-	float mass;
 
 	Texture texture;
     float scale;

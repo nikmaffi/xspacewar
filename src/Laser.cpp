@@ -4,7 +4,6 @@ Laser::Laser(const Vector2 &pos, const Texture &texture, float angle, float scal
 pos(pos),
 angle(angle),
 vel((Vector2){LASER_SPEED * std::cos(angle * DEG2RAD), LASER_SPEED * std::sin(angle * DEG2RAD)}),
-mass(LASER_MASS),
 texture(texture),
 scale(scale),
 flickeringTimer(.0f),
@@ -22,7 +21,6 @@ Laser& Laser::operator=(const Laser &laser) {
 	pos = laser.pos;
 	angle = laser.angle;
 	vel = laser.vel;
-	mass = laser.mass;
 	texture = laser.texture;
 	scale = laser.scale;
 	flickeringTimer = laser.flickeringTimer;

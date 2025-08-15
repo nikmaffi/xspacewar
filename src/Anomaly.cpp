@@ -32,14 +32,14 @@ void Anomaly::changeAnomaly(void) {
 	}
 }
 
-Vector2 Anomaly::attract(float mass, const Vector2 &pos) const {
+Vector2 Anomaly::attract(const Vector2 &pos) const {
 	Vector2 dist = (Vector2){this->pos.x - pos.x, this->pos.y - pos.y};
-	float distMag = std::sqrt(dist.x * dist.x + dist.y * dist.y) * WSCALE / WINDOW_WIDTH;
-	float forceMag = G * this->mass * mass / (distMag * distMag * distMag);
+	float distMag = std::sqrt(dist.x * dist.x + dist.y * dist.y) * WSCALE / WINDOW_WIDTH + EPSILON;
+	float forceMag = G * this->mass / (distMag * distMag * distMag);
 
 	return (Vector2){
-        (forceMag * dist.x / mass) * GetFrameTime() * DT_MULTIPLIER,
-        (forceMag * dist.y / mass) * GetFrameTime() * DT_MULTIPLIER
+        (forceMag * dist.x) * GetFrameTime() * DT_MULTIPLIER,
+        (forceMag * dist.y) * GetFrameTime() * DT_MULTIPLIER
     };
 }
 

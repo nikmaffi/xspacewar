@@ -28,7 +28,7 @@ public:
 	const Vector2 &getPosition(void) const;
 	Circle getCircle(void) const;
 	void changeAnomaly(void);
-	Vector2 attract(float mass, const Vector2 &pos) const;
+	Vector2 attract(const Vector2 &pos) const;
 	void draw(void);
 
 	friend struct GhostEntity;

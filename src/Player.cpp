@@ -6,7 +6,6 @@ startPos(pos),
 angle(angle),
 startAngle(angle),
 vel((Vector2){0.f, 0.f}),
-mass(PLAYER_MASS),
 texture(LoadTexture(textureRes)),
 sprite((Rectangle){0.f, texture.height / 2.f, (float)texture.width, texture.height / 2.f}),
 color(WHITE),
@@ -157,7 +156,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 
 		projectiles[i].move();
 		if(blackHoleAsAnomaly) {
-			projectiles[i].move(anomaly.attract(projectiles[i].mass, projectiles[i].pos));
+			projectiles[i].move(anomaly.attract(projectiles[i].pos));
 		} 
 
 		if(projectiles[i].isCollapsing()) {
@@ -258,7 +257,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		}
 	}
 
-	move(anomaly.attract(mass, pos));
+	move(anomaly.attract(pos));
 }
 
 void Player::draw(void) {
