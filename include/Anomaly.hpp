@@ -7,31 +7,34 @@
 struct GhostEntity;
 
 class Anomaly {
+	friend struct GhostEntity;
+
 private:
-	Vector2 pos;
+	// Physics attributes
 	float mass;
-
+	Vector2 pos;
 	float angle;
-
+	
+	// Game object attributes
 	Texture texture;
     Rectangle sprite;
+	Circle collisionBox;
     Color color;
     float scale;
 
+	// Timers
 	float flickeringTimer;
 
+	// Random number generator
 	std::random_device rd;
 	std::uniform_real_distribution<float> dist;
 public:
-	Anomaly(const Vector2 &pos, const char *textureRes, float scale);
-	~Anomaly();
+	Anomaly(const Vector2 &pos, const Texture &texture, float scale);
 	const Vector2 &getPosition(void) const;
-	Circle getCircle(void) const;
+	const Circle &getCircle(void) const;
 	void changeAnomaly(void);
-	Vector2 attract(const Vector2 &pos) const;
+	Vector2 attract(const Vector2 &objPos) const;
 	void draw(void);
-
-	friend struct GhostEntity;
 };
 
 #endif //__ANOMALY_HPP__

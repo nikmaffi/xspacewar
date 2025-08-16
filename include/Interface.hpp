@@ -6,23 +6,22 @@
 struct GhostInterface;
 
 class Interface {
-private:
-    Vector2 pos;
+	friend struct GhostInterface;
 
-	Color color;
+private:
+	// Game object attributes
+	Vector2 pos;
     std::string text;
 	Font font;
-    unsigned int fontSize;
+	Color color;
 
+	// Timers
 	float flickeringTimer;
 public:
-	Interface(const Vector2 &pos, const char *fontRes, unsigned int size, const Color &color);
-	~Interface();
+	Interface(const Vector2 &pos, const Font &font, const Color &color);
 	Interface(void);
 	void update(const char *str, ...);
 	void draw(void);
-
-	friend struct GhostInterface;
 };
 
 #endif //__INTERFACE_HPP__

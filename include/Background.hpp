@@ -5,14 +5,15 @@
 
 class Background {
 private:
-	float flickeringTimer;
-
+	// Game object attributes
 	Texture texture;
     Color color;
+
+	// Timers
+	float flickeringTimer;
 public:
-	Background(const char *textureRes);
-	~Background();
-	virtual void draw(void);
+	Background(const Texture &texture);
+	void draw(void);
 };
 
 #endif //__BACKGROUND_HPP__

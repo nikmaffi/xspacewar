@@ -6,14 +6,20 @@
 struct GhostParticles;
 
 class Particles {
+    friend struct GhostParticles;
+
 private:
     Vector2 *pos;
     Vector2 *dir;
     unsigned int size;
 
-    float flickeringTimer;
+    // Explosion color
     Color color;
 
+    // Timers
+    float flickeringTimer;
+
+    // Random number generator
     std::random_device rd;
 	std::uniform_real_distribution<float> dist;
 public:
@@ -23,8 +29,6 @@ public:
     void init(const Vector2 &pos);
     void expandBy(float factor);
     void draw(void);
-
-    friend struct GhostParticles;
 };
 
 #endif //__PARTICLES_HPP__

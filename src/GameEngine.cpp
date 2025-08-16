@@ -1,21 +1,41 @@
 #include <GameEngine.hpp>
 
 GameEngine::GameEngine(void) :
+icon(LoadImage((gamePath + "/res/img/logo.png").c_str())),
+backgroundTex(LoadTexture((gamePath + "/res/img/space.png").c_str())),
+anomalyTex(LoadTexture((gamePath + "/res/img/anomaly.png").c_str())),
+playersTex{
+    LoadTexture((gamePath + "/res/img/player_1.png").c_str()),
+    LoadTexture((gamePath + "/res/img/player_2.png").c_str()),
+    LoadTexture((gamePath + "/res/img/player_3.png").c_str()),
+    LoadTexture((gamePath + "/res/img/player_4.png").c_str())
+},
+lasersTex{
+    LoadTexture((gamePath + "/res/img/laser.png").c_str()),
+    {},
+    {},
+    {}
+},
+interfaceFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
 monitor((gamePath + "/res/fonts/GoogleSansCode.ttf").c_str()),
 userInterface(
 	UI_POS,
-    (gamePath + "/res/fonts/VT323.ttf").c_str(),
-	UI_FONT_SIZE * WINDOW_WIDTH / WSCALE,
+    interfaceFont,
     UI_TEXT_COLOR
 ),
-background((gamePath + "/res/img/space.png").c_str()),
+background(backgroundTex),
+anomaly(
+    ANOMALY_POS,
+    anomalyTex,
+    WINDOW_WIDTH / WSCALE
+),
 players{
     Player(
         PLAYER_1_START_POS,
-        (gamePath + "/res/img/player_1.png").c_str(),
-        (gamePath + "/res/img/laser.png").c_str(),
+        playersTex[0],
+        lasersTex[0],
         PLAYER_1_START_ANGLE,
         PLAYER_TEX_SCALE,
         laserSound,
@@ -23,8 +43,8 @@ players{
     ),
     Player(
         PLAYER_2_START_POS,
-        (gamePath + "/res/img/player_2.png").c_str(),
-        (gamePath + "/res/img/laser.png").c_str(),
+        playersTex[1],
+        lasersTex[0],
         PLAYER_2_START_ANGLE,
         PLAYER_TEX_SCALE,
         laserSound,
@@ -32,8 +52,8 @@ players{
     ),
     Player(
         PLAYER_3_START_POS,
-        (gamePath + "/res/img/player_3.png").c_str(),
-        (gamePath + "/res/img/laser.png").c_str(),
+        playersTex[2],
+        lasersTex[0],
         PLAYER_3_START_ANGLE,
         PLAYER_TEX_SCALE,
         laserSound,
@@ -41,47 +61,84 @@ players{
     ),
     Player(
         PLAYER_4_START_POS,
-        (gamePath + "/res/img/player_4.png").c_str(),
-        (gamePath + "/res/img/laser.png").c_str(),
+        playersTex[3],
+        lasersTex[0],
         PLAYER_4_START_ANGLE,
         PLAYER_TEX_SCALE,
         laserSound,
         explosionSound
     )
 },
-anomaly(
-    ANOMALY_POS,
-    (gamePath + "/res/img/anomaly.png").c_str(),
-    WINDOW_WIDTH / WSCALE
-),
 phosphorus(players, anomaly, userInterface) {
-    icon = LoadImage((gamePath + "/res/logo.png").c_str());
-    SetWindowIcon(icon);
-
+    // Loading game settings
 	loadData();
 
+    // Resetting all players
     for(size_t i = 0; i < numPlayers; i++) {
         players[i].reset();
     }
 
+    // Changing anomaly based on read settings
 	anomaly.changeAnomaly();
+
+    // Changing players and lasers appearance based on read settings
+    if(!retroStyleShips) {
+        // Unloading old textures
+        for(int i = 0; i < MAX_PLAYERS; i++) {
+            if(i == 0) {
+                UnloadTexture(lasersTex[i]);
+            }
+            UnloadTexture(playersTex[i]);
+        }
+
+        // Loading new textures
+        playersTex[0] = LoadTexture((gamePath + "/res/img/player_blue.png").c_str());
+        playersTex[1] = LoadTexture((gamePath + "/res/img/player_red.png").c_str());
+        playersTex[2] = LoadTexture((gamePath + "/res/img/player_empire.png").c_str());
+        playersTex[3] = LoadTexture((gamePath + "/res/img/player_rebellion.png").c_str());
+        lasersTex[0] = LoadTexture((gamePath + "/res/img/laser_blue.png").c_str());
+        lasersTex[1] = LoadTexture((gamePath + "/res/img/laser_red.png").c_str());
+        lasersTex[2] = LoadTexture((gamePath + "/res/img/laser_green.png").c_str());
+        lasersTex[3] = LoadTexture((gamePath + "/res/img/laser_magenta.png").c_str());
+
+        // Setting new textures
+        for(int i = 0; i < MAX_PLAYERS; i++) {
+            players[i].reloadTextures(playersTex[i], lasersTex[i]);
+        }
+    }
 }
 
 GameEngine::~GameEngine() {
-    UnloadSound(laserSound);
+    // Unloading sounds
     UnloadSound(explosionSound);
+    UnloadSound(laserSound);
 
+    // Unloading fonts
+    UnloadFont(interfaceFont);
+
+    // Unloading textures
+    for(int i = 0; i < MAX_PLAYERS; i++) {
+        if(i == 0 || !retroStyleShips) {
+            UnloadTexture(lasersTex[i]);
+        }
+        UnloadTexture(playersTex[i]);
+    }
+    UnloadTexture(anomalyTex);
+    UnloadTexture(backgroundTex);
     UnloadImage(icon);
 
+    // Closing subsystems
     CloseAudioDevice();
     CloseWindow();
 
+    // Saving game settings
     saveData();
 }
 
 void GameEngine::loadData(void) {
-	std::ifstream stream("./data/data.bin", std::ios::binary);
-
+    std::ifstream stream("./data/data.bin", std::ios::binary);
+    
+    //Reading game settings data
 	stream.read((char *)&burnInMonitorEffect, sizeof(bool));
 	stream.read((char *)&flickeringMonitorEffect, sizeof(bool));
 	stream.read((char *)&shipProjectilesLimit, sizeof(bool));
@@ -98,6 +155,7 @@ void GameEngine::loadData(void) {
 void GameEngine::saveData(void) {
     std::ofstream stream("./data/data.bin", std::ios::binary);
 
+    // Writing game settings data
 	stream.write((char *)&burnInMonitorEffect, sizeof(bool));
 	stream.write((char *)&flickeringMonitorEffect, sizeof(bool));
 	stream.write((char *)&shipProjectilesLimit, sizeof(bool));
@@ -112,6 +170,7 @@ void GameEngine::saveData(void) {
 }
 
 void GameEngine::eventsHandler(void) {
+    // Start/stop game
     if(IsKeyPressed(KEY_ENTER)) {
         if(monitor.isRunning()) {
             for(size_t i = 0; i < numPlayers; i++) {
@@ -125,6 +184,7 @@ void GameEngine::eventsHandler(void) {
     }
 
     if(!monitor.isRunning()) {
+        // Game appearance modifiers
         if(IsKeyPressed(KEY_ONE)) {
             burnInMonitorEffect = !burnInMonitorEffect;
         }
@@ -134,18 +194,40 @@ void GameEngine::eventsHandler(void) {
         }
 
         if(IsKeyPressed(KEY_THREE)) {
+            // Unloading old textures
+            for(int i = 0; i < MAX_PLAYERS; i++) {
+                if(i == 0 || !retroStyleShips) {
+                    UnloadTexture(lasersTex[i]);
+                }
+                UnloadTexture(playersTex[i]);
+            }
+
             retroStyleShips = !retroStyleShips;
 
-            if (retroStyleShips) {
-                players[0].reloadTextures((gamePath + "/res/img/player_1.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
-                players[1].reloadTextures((gamePath + "/res/img/player_2.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
-                players[2].reloadTextures((gamePath + "/res/img/player_3.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
-                players[3].reloadTextures((gamePath + "/res/img/player_4.png").c_str(), (gamePath + "/res/img/laser.png").c_str());
+            // Loading new textures based on selected settings
+            if(retroStyleShips) {
+                playersTex[0] = LoadTexture((gamePath + "/res/img/player_1.png").c_str());
+                playersTex[1] = LoadTexture((gamePath + "/res/img/player_2.png").c_str());
+                playersTex[2] = LoadTexture((gamePath + "/res/img/player_3.png").c_str());
+                playersTex[3] = LoadTexture((gamePath + "/res/img/player_4.png").c_str());
+                lasersTex[0] = LoadTexture((gamePath + "/res/img/laser.png").c_str());
+
+                for(int i = 0; i < MAX_PLAYERS; i++) {
+                    players[i].reloadTextures(playersTex[i], lasersTex[0]);
+                }
             } else {
-                players[0].reloadTextures((gamePath + "/res/img/blue_player.png").c_str(), (gamePath + "/res/img/blue_laser.png").c_str());
-                players[1].reloadTextures((gamePath + "/res/img/red_player.png").c_str(), (gamePath + "/res/img/red_laser.png").c_str());
-                players[2].reloadTextures((gamePath + "/res/img/player_empire.png").c_str(), (gamePath + "/res/img/green_laser.png").c_str());
-                players[3].reloadTextures((gamePath + "/res/img/player_rebellion.png").c_str(), (gamePath + "/res/img/magenta_laser.png").c_str());
+                playersTex[0] = LoadTexture((gamePath + "/res/img/player_blue.png").c_str());
+                playersTex[1] = LoadTexture((gamePath + "/res/img/player_red.png").c_str());
+                playersTex[2] = LoadTexture((gamePath + "/res/img/player_empire.png").c_str());
+                playersTex[3] = LoadTexture((gamePath + "/res/img/player_rebellion.png").c_str());
+                lasersTex[0] = LoadTexture((gamePath + "/res/img/laser_blue.png").c_str());
+                lasersTex[1] = LoadTexture((gamePath + "/res/img/laser_red.png").c_str());
+                lasersTex[2] = LoadTexture((gamePath + "/res/img/laser_green.png").c_str());
+                lasersTex[3] = LoadTexture((gamePath + "/res/img/laser_magenta.png").c_str());
+
+                for(int i = 0; i < MAX_PLAYERS; i++) {
+                    players[i].reloadTextures(playersTex[i], lasersTex[i]);
+                }
             }
         }
 
@@ -153,9 +235,9 @@ void GameEngine::eventsHandler(void) {
             playSounds = !playSounds;
         }
 
+        // Game mechanics modifiers
         if(IsKeyPressed(KEY_L)) {
             shipProjectilesLimit = !shipProjectilesLimit;
-
 			oneShotOneKill = false;
         }
 
@@ -165,13 +247,11 @@ void GameEngine::eventsHandler(void) {
 
         if(IsKeyPressed(KEY_S)) {
             blackHoleAsAnomaly = !blackHoleAsAnomaly;
-
             anomaly.changeAnomaly();
         }
 
         if(IsKeyPressed(KEY_K)) {
             oneShotOneKill = !oneShotOneKill;
-
             shipProjectilesLimit = true;
 
             for(size_t i = 0; i < numPlayers; i++) {
@@ -183,6 +263,7 @@ void GameEngine::eventsHandler(void) {
             numPlayers = (numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
         }
     } else {
+        // Players mechanics commands
         for(size_t i = 0; i < numPlayers; i++) {
             if(IsKeyDown(keyboardMap[i][0])) {
                 players[i].move(PLAYER_SPRINT);
@@ -253,11 +334,13 @@ void GameEngine::update(void) {
 	} else {
         int alive = 0;
 
+        // Counting how many players are alive
         for(size_t i = 0; i < numPlayers; i++) {
             players[i].update(players, i, anomaly);
             alive += !players[i].isDead();
         }
 
+        // If a single player is alive, or all players are dead the game starts again
         if(alive <= 1) {
             for(size_t i = 0; i < numPlayers; i++) {
                 players[i].reset();
@@ -267,26 +350,33 @@ void GameEngine::update(void) {
 }
 
 void GameEngine::draw(void) {
+    // Drawing burn-in effect
 	if(burnInMonitorEffect) {
 		phosphorus.draw(monitor.isRunning());
 	}
 
 	if(monitor.isRunning()) {
+        // Drawing game objects
 		background.draw();
 		anomaly.draw();
 		for(size_t i = 0; i < numPlayers; i++) {
             players[i].draw();
         }
 	} else {
+        // Drawing user interface
 		userInterface.draw();
 	}
 
+    // Drawing video terminal
 	monitor.draw();
 }
 
 void GameEngine::gameLoop(void) {
+    // Setting FPS and window icon
+    SetWindowIcon(icon);
 	SetTargetFPS(FPS);
 
+    // Game loop
 	while(!WindowShouldClose()) {
 		eventsHandler();
 

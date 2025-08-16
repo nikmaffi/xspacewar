@@ -27,7 +27,7 @@
 // GLOBALS
 // ########################################################################################################################################
 
-// Parameters
+// Global parameters
 extern bool   burnInMonitorEffect;
 extern bool   flickeringMonitorEffect;
 extern bool   shipProjectilesLimit;
@@ -113,8 +113,11 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 // Trademark
 #define VT_TRADEMARK " NKM\nT7000"
-#define VT_TRADEMARK_POS(dim) ((Vector2){WINDOW_WIDTH - 350 - ((Vector2)dim).x / 2, WINDOW_HEIGHT - 150 - ((Vector2)dim).y / 2})
-#define VT_TRADEMARK_FONT_SIZE 75
+#define VT_TRADEMARK_POS(dim) ((Vector2){ \
+	(WINDOW_WIDTH - 350 - ((Vector2)dim).x / 2) * WINDOW_WIDTH / WSCALE, \
+	(WINDOW_HEIGHT - 150 - ((Vector2)dim).y / 2) * WINDOW_WIDTH / WSCALE \
+})
+#define VT_TRADEMARK_FONT_SIZE (75 * WINDOW_WIDTH / WSCALE)
 #define VT_TRADEMARK_COLOR ((Color){56, 57, 59, 255})
 
 
@@ -184,5 +187,6 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 // Attributes
 #define ANOMALY_MASS 1e12
 #define ANOMALY_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
+#define ANOMALY_COLLISION_RADIUS (2 * WINDOW_WIDTH / WSCALE)
 
 #endif //__XSPACEWAR_HPP__

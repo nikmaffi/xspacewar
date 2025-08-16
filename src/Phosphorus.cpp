@@ -38,10 +38,9 @@ timer(PHOSPHORUS_BIG_TIMER) {
 
 GhostInterface::GhostInterface(const Interface &interface):
 pos(interface.pos),
-color(PHOSPHORUS_COLOR(255)),
 text(interface.text),
 font(interface.font),
-fontSize(interface.fontSize),
+color(PHOSPHORUS_COLOR(255)),
 timer(PHOSPHORUS_SMALL_TIMER) {
 }
 
@@ -52,28 +51,35 @@ interface(interface) {
 }
 
 void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
-    if(monitorRunning && !player.isExploding() && !player.capturedByGravityWell && !player.isDead()) {
+    if(monitorRunning && !player.isInHyperspace() && !player.isExploding() && !player.isCapturedByGravityWell() && !player.isDead()) {
+        // Pushing a copy of the player texture to simulating the burn-in effect
         entitiesPhosphorus.push_back(GhostEntity(player));
     }
 
+    // Updating all player "ghost textures" alpha value
     for(size_t i = 0; i < entitiesPhosphorus.size(); i++) {
+        // Updating the alpha timer value
         entitiesPhosphorus[i].timer -= GetFrameTime() * PLAYER_P_DT_MULTIPLIER;
 
+        // If the timer reaches zero the "ghost texture" must be deleted
         if(entitiesPhosphorus[i].timer <= .0f) {
             entitiesPhosphorus.erase(entitiesPhosphorus.begin() + i);
 			continue;
         }
 
+        // Updating "ghost texture" color alpha value
         entitiesPhosphorus[i].color.a = (unsigned char)entitiesPhosphorus[i].timer;
     }
 }
 
 void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning) {
     if(monitorRunning && player.explosionTimer >= EXPLOSION_LARGE_TIME && player.isExploding() &&
-    !player.capturedByGravityWell && !player.isDead()) {
+    !player.isCapturedByGravityWell() && !player.isDead()) {
+        // Pushing a copy of the explosion particles array
 		playerExplosionPhosphorus.push_back(GhostParticles(player.particles, EXPLOSION_LARGE_PARTICLES));
 	}
 
+    // Updating all "ghost particles" alpha value
 	for(size_t i = 0; i < playerExplosionPhosphorus.size(); i++) {
 		playerExplosionPhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
 
@@ -88,15 +94,18 @@ void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning
 
 void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
     for(size_t i = playerLaserPhosphorus.size(); i < player.projectiles.size(); i++) {
+        // Pushing a new std::vector<> for the player lasers
         playerLaserPhosphorus.push_back(std::vector<GhostEntity>());
     }
 
+    // Pushing a copy of all the player lasers textures
     for(size_t i = 0; i < player.projectiles.size(); i++) {
         if(monitorRunning && !player.projectiles[i].isExploding()) {
 			playerLaserPhosphorus[i].push_back(GhostEntity(player.projectiles[i]));
 		}
 	}
 
+    // Updating all player lasers "ghost textures" alpha value
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserPhosphorus[i].size(); j++) {
             playerLaserPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
@@ -110,6 +119,7 @@ void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
     }
 
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
+        // Deleting the std::vector<> if is empty
         if(playerLaserPhosphorus[i].empty()) {
             playerLaserPhosphorus.erase(playerLaserPhosphorus.begin() + i);
         }
@@ -118,9 +128,11 @@ void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
 
 void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRunning) {
     for(size_t i = playerLaserExplosionPhosphorus.size(); i < player.projectiles.size(); i++) {
+        // Pushing a new std::vector<> for the player lasers particles
         playerLaserExplosionPhosphorus.push_back(std::vector<GhostParticles>());
     }
 
+    // Pushing a copy of all the lasers explosion particles arrays
 	for(size_t i = 0; i < player.projectiles.size(); i++) {
 		if(monitorRunning && player.projectiles[i].explosionTimer >= EXPLOSION_SMALL_TIME &&
             player.projectiles[i].isExploding()) {
@@ -130,6 +142,7 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
 		}
 	}
 
+    // Updating all players lasers explosion "ghost particles" alpha value
     for(size_t i = 0; i < playerLaserExplosionPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserExplosionPhosphorus[i].size(); j++) {
             playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
@@ -143,6 +156,7 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
     }
 
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
+        // Deleting the std::vector<> if is empty
         if(playerLaserPhosphorus[i].empty()) {
             playerLaserPhosphorus.erase(playerLaserPhosphorus.begin() + i);
         }
@@ -150,16 +164,17 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
 }
 
 void Phosphorus::update(bool monitorRunning) {
-    // Anomaly
+    // Updating the anomaly burn-in effect
 	if(monitorRunning) {
 		entitiesPhosphorus.push_back(GhostEntity(anomaly));
 	}
 
-    // Interface
+    // Updating the interface text
     if(!monitorRunning) {
 		interfacePhosphorus.push_back(GhostInterface(interface));
 	}
 
+    // Updating all interface "ghost texts" alpha value
 	for(size_t i = 0; i < interfacePhosphorus.size(); i++) {
 		interfacePhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
 
@@ -171,7 +186,7 @@ void Phosphorus::update(bool monitorRunning) {
 		interfacePhosphorus[i].color.a = (unsigned char)interfacePhosphorus[i].timer;
 	}
 
-    // Players
+    // Updating the players
     for(size_t i = 0; i < numPlayers; i++) {
         updatePlayer(players[i], monitorRunning);
         updatePlayerExplosion(players[i], monitorRunning);
@@ -256,7 +271,7 @@ void Phosphorus::draw(bool monitorRunning) {
         Vector2 dim = MeasureTextEx(
             interfacePhosphorus[i].font,
             interfacePhosphorus[i].text.c_str(),
-            interfacePhosphorus[i].fontSize,
+            interfacePhosphorus[i].font.baseSize,
             0.f
         );
         DrawTextEx(
@@ -266,7 +281,7 @@ void Phosphorus::draw(bool monitorRunning) {
                 interfacePhosphorus[i].pos.x - dim.x / 2,
                 interfacePhosphorus[i].pos.y - dim.y / 2
             },
-            interfacePhosphorus[i].fontSize,
+            interfacePhosphorus[i].font.baseSize,
             0.f,
             interfacePhosphorus[i].color
         );

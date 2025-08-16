@@ -1,6 +1,6 @@
 #include <xspacewar.hpp>
 
-// Globals
+// Global parameters
 bool   burnInMonitorEffect = true;
 bool   flickeringMonitorEffect = true;
 bool   shipProjectilesLimit = true;
@@ -11,4 +11,5 @@ bool   oneShotOneKill = false;
 bool   playSounds = false;
 size_t numPlayers = 2;
 
+// Argv path used for locate game resources
 std::string gamePath = ".";

@@ -3,13 +3,12 @@
 
 #include <xspacewar.hpp>
 
-class Circle {
-private:
+struct Circle {
     Vector2 center;
     float radius;
-public:
+
     Circle(const Vector2 &center, float radius);
-    bool overlaps(const Circle &other);
+    bool overlaps(const Circle &other) const;
 };
 
 #endif //__CIRCLE_HPP__

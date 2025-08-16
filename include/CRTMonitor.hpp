@@ -5,9 +5,11 @@
 
 class CRTMonitor {
 private:
+	// Misc attributes
 	bool running;
-	Font font;
 
+	// Trademark attributes
+	Font font;
 	Vector2 trademarkSize;
 public:
 	CRTMonitor(const char *fontRes);

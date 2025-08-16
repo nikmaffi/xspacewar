@@ -11,37 +11,41 @@ struct GhostEntity;
 struct GhostParticles;
 
 class Laser {
+	friend class Player;
+	friend class Phosphorus;
+	friend struct GhostEntity;
+	friend struct GhostParticles;
+
 private:
+	// Physics attributes
 	Vector2 pos;
 	float angle;
 	Vector2 vel;
-
+	float dispersion;
+	
+	// Game object attributes
 	Texture texture;
+	Circle collisionBox;
+    Color color;
     float scale;
 
+	// Timers
 	float flickeringTimer;
-    Color color;
-
 	float explosionTimer;
-	Particles particles;
 
-	float dispersion;
+	// Explosion attributes
+	Particles particles;
 public:
 	Laser(const Vector2 &pos, const Texture &texture, float angle, float scale);
 	Laser(const Laser &laser);
 	Laser &operator=(const Laser &laser);
 	bool isExploding(void) const;
-	Circle getCircle(void) const;
+	const Circle &getCircle(void) const;
 	bool isCollidingWith(const Circle &other) const;
 	bool isCollapsing(void)const;
 	void move(void);
 	void move(const Vector2 &acc);
 	void draw(void);
-
-	friend class Player;
-	friend class Phosphorus;
-	friend struct GhostEntity;
-	friend struct GhostParticles;
 };
 
 #endif //__LASER_HPP__
