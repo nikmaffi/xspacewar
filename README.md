@@ -22,6 +22,7 @@ Players can enable or disable visual effects that emulate old CRT monitors, incl
 These effects are designed to evoke a nostalgic atmosphere and can be toggled in the game settings.
 
 👉 [Play XSpacewar! Online](https://nikmaffi.github.io/xspacewar/xspacewar.html)
+
 ![Gameplay GIF](assets/gameplay.gif)  
 
 
@@ -34,11 +35,13 @@ All other assets (images, sounds, fonts) are either original creations or source
 
 ### 🖋️ Fonts
 - [VT323](https://fonts.google.com/specimen/VT323?query=vt323) — Google Fonts  
-- [Google Sans Code](https://fonts.google.com/specimen/Google+Sans+Code?query=sans+code) — Google Fonts  
+  License: [SIL Open Font License (OFL) v1.1](https://scripts.sil.org/OFL)  
+- [Doto](https://fonts.google.com/specimen/Doto?query=dot) — Google Fonts  
+  License: [SIL Open Font License (OFL) v1.1](https://scripts.sil.org/OFL)
 
 ### 🔊 Audio
 - **Explosion_02.wav** by LittleRobotSoundFactory  
-  [Link](https://freesound.org/s/270306/) — License: Attribution 4.0  
+  [Link](https://freesound.org/s/270306/) — License: Attribution 4.0
 
 - **Retro, Laser Shot 03.wav** by LilMati  
   [Link](https://freesound.org/s/414885/) — License: Creative Commons 0
