@@ -236,9 +236,7 @@ void GameEngine::eventsHandler(void) {
 }
 
 void GameEngine::update(void) {
-	if(__burnInEffectValue > PHOSPHORUS_EFFECT_TRIG) {
-		phosphorus.update(monitor.isRunning());
-	}
+	phosphorus.update(monitor.isRunning());
 
 	if(!monitor.isRunning()) {
         userInterface.update(
@@ -290,9 +288,7 @@ void GameEngine::update(void) {
 
 void GameEngine::draw(void) {
     // Drawing burn-in effect
-	if(__burnInEffectValue > PHOSPHORUS_EFFECT_TRIG) {
-		phosphorus.draw(monitor.isRunning());
-	}
+	phosphorus.draw(monitor.isRunning());
 
 	if(monitor.isRunning()) {
         // Drawing game objects
