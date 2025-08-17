@@ -178,7 +178,7 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 // Attributes
 #define UI_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
-#define UI_FONT_SIZE (26 * WINDOW_WIDTH / WSCALE)
+#define UI_FONT_SIZE (25 * WINDOW_WIDTH / WSCALE)
 #define UI_TEXT_COLOR ((Color){135, 206, 250, 255})
 
 
