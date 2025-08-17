@@ -57,18 +57,19 @@ void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
     }
 
     // Updating all player "ghost textures" alpha value
-    for(size_t i = 0; i < entitiesPhosphorus.size(); i++) {
+    size_t i = 0;
+    while(i < entitiesPhosphorus.size()) {
         // Updating the alpha timer value
         entitiesPhosphorus[i].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
         // If the timer reaches zero the "ghost texture" must be deleted
         if(entitiesPhosphorus[i].timer <= .0f) {
             entitiesPhosphorus.erase(entitiesPhosphorus.begin() + i);
-			continue;
+        } else {
+            // Updating "ghost texture" color alpha value
+            entitiesPhosphorus[i].color.a = (unsigned char)entitiesPhosphorus[i].timer;
+            i++;
         }
-
-        // Updating "ghost texture" color alpha value
-        entitiesPhosphorus[i].color.a = (unsigned char)entitiesPhosphorus[i].timer;
     }
 }
 
@@ -80,15 +81,16 @@ void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning
 	}
 
     // Updating all "ghost particles" alpha value
-	for(size_t i = 0; i < playerExplosionPhosphorus.size(); i++) {
+    size_t i = 0;
+	while(i < playerExplosionPhosphorus.size()) {
 		playerExplosionPhosphorus[i].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
 		if(playerExplosionPhosphorus[i].timer <= 0) {
 			playerExplosionPhosphorus.erase(playerExplosionPhosphorus.begin() + i);
-			continue;
-		}
-
-		playerExplosionPhosphorus[i].color.a = (unsigned char)playerExplosionPhosphorus[i].timer;
+		} else {
+            playerExplosionPhosphorus[i].color.a = (unsigned char)playerExplosionPhosphorus[i].timer;
+            i++;
+        }
 	}
 }
 
@@ -107,21 +109,26 @@ void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
 
     // Updating all player lasers "ghost textures" alpha value
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
-        for(size_t j = 0; j < playerLaserPhosphorus[i].size(); j++) {
+        size_t j = 0;
+        while(j < playerLaserPhosphorus[i].size()) {
             playerLaserPhosphorus[i][j].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
             if(playerLaserPhosphorus[i][j].timer <= .0f) {
                 playerLaserPhosphorus[i].erase(playerLaserPhosphorus[i].begin() + j);
             } else {
                 playerLaserPhosphorus[i][j].color.a = (unsigned char)playerLaserPhosphorus[i][j].timer;
+                j++;
             }
         }
     }
 
-    for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
+    size_t i =0;
+    while(i < playerLaserPhosphorus.size()) {
         // Deleting the std::vector<> if is empty
         if(playerLaserPhosphorus[i].empty()) {
             playerLaserPhosphorus.erase(playerLaserPhosphorus.begin() + i);
+        } else {
+            i++;
         }
     }
 }
@@ -144,21 +151,26 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
 
     // Updating all players lasers explosion "ghost particles" alpha value
     for(size_t i = 0; i < playerLaserExplosionPhosphorus.size(); i++) {
-        for(size_t j = 0; j < playerLaserExplosionPhosphorus[i].size(); j++) {
+        size_t j = 0;
+        while(j < playerLaserExplosionPhosphorus[i].size()) {
             playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
             if(playerLaserExplosionPhosphorus[i][j].timer <= .0f) {
                 playerLaserExplosionPhosphorus[i].erase(playerLaserExplosionPhosphorus[i].begin() + j);
             } else {
                 playerLaserExplosionPhosphorus[i][j].color.a = (unsigned char)playerLaserExplosionPhosphorus[i][j].timer;
+                j++;
             }
         }
     }
 
-    for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
+    size_t i = 0;
+    while(i < playerLaserExplosionPhosphorus.size()) {
         // Deleting the std::vector<> if is empty
-        if(playerLaserPhosphorus[i].empty()) {
-            playerLaserPhosphorus.erase(playerLaserPhosphorus.begin() + i);
+        if(playerLaserExplosionPhosphorus[i].empty()) {
+            playerLaserExplosionPhosphorus.erase(playerLaserExplosionPhosphorus.begin() + i);
+        } else {
+            i++;
         }
     }
 }
@@ -175,15 +187,16 @@ void Phosphorus::update(bool monitorRunning) {
 	}
 
     // Updating all interface "ghost texts" alpha value
-	for(size_t i = 0; i < interfacePhosphorus.size(); i++) {
+    size_t i = 0;
+	while(i < interfacePhosphorus.size()) {
 		interfacePhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
 
 		if(interfacePhosphorus[i].timer <= 0) {
 			interfacePhosphorus.erase(interfacePhosphorus.begin());
-			continue;
-		}
-
-		interfacePhosphorus[i].color.a = (unsigned char)interfacePhosphorus[i].timer;
+		} else {
+            interfacePhosphorus[i].color.a = (unsigned char)interfacePhosphorus[i].timer;
+            i++;
+        }
 	}
 
     // Updating the players
