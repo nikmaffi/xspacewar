@@ -3,16 +3,18 @@
 
 #include <xspacewar.hpp>
 #include <CRTMonitor.hpp>
-#include <Phosphorus.hpp>
+#include <Knob.hpp>
+#include <Interface.hpp>
 #include <Background.hpp>
 #include <Anomaly.hpp>
 #include <Player.hpp>
-#include <Interface.hpp>
+#include <Phosphorus.hpp>
 
 class GameEngine {
 private:
 	// Assets - textures
 	Image icon;
+	Texture knobTex;
 	Texture backgroundTex;
 	Texture anomalyTex;
 	Texture playersTex[MAX_PLAYERS];
@@ -27,6 +29,8 @@ private:
 
 	// Game objects
 	CRTMonitor monitor;
+	Knob flickeringKnob;
+	Knob burnInKnob;
 	Interface userInterface;
 	Background background;
 	Anomaly anomaly;

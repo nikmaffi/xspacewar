@@ -7,7 +7,7 @@ texture(player.texture),
 sprite(player.sprite),
 color(PHOSPHORUS_COLOR(255)),
 scale(player.scale),
-timer(PHOSPHORUS_BIG_TIMER) {
+timer(__burnInEffectValue) {
 }
 
 GhostEntity::GhostEntity(const Laser &laser):
@@ -17,7 +17,7 @@ texture(laser.texture),
 sprite((Rectangle){.0f, .0f, (float)laser.texture.width, (float)laser.texture.height}),
 color(PHOSPHORUS_COLOR(255)),
 scale(laser.scale),
-timer(PHOSPHORUS_BIG_TIMER) {
+timer(__burnInEffectValue) {
 }
 
 GhostEntity::GhostEntity(const Anomaly &anomaly):
@@ -27,13 +27,13 @@ texture(anomaly.texture),
 sprite(anomaly.sprite),
 color(PHOSPHORUS_COLOR(255)),
 scale(anomaly.scale),
-timer(PHOSPHORUS_SMALL_TIMER) {
+timer(__burnInEffectValue) {
 }
 
 GhostParticles::GhostParticles(const Particles &particles, size_t size):
 pos(particles.pos, particles.pos + size),
 color(PHOSPHORUS_COLOR(255)),
-timer(PHOSPHORUS_BIG_TIMER) {
+timer(__burnInEffectValue) {
 }
 
 GhostInterface::GhostInterface(const Interface &interface):
@@ -41,7 +41,7 @@ pos(interface.pos),
 text(interface.text),
 font(interface.font),
 color(PHOSPHORUS_COLOR(255)),
-timer(PHOSPHORUS_SMALL_TIMER) {
+timer(__burnInEffectValue) {
 }
 
 Phosphorus::Phosphorus(const Player *players, const Anomaly &anomaly, const Interface &interface):
@@ -59,7 +59,7 @@ void Phosphorus::updatePlayer(const Player &player, bool monitorRunning) {
     // Updating all player "ghost textures" alpha value
     for(size_t i = 0; i < entitiesPhosphorus.size(); i++) {
         // Updating the alpha timer value
-        entitiesPhosphorus[i].timer -= GetFrameTime() * PLAYER_P_DT_MULTIPLIER;
+        entitiesPhosphorus[i].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
         // If the timer reaches zero the "ghost texture" must be deleted
         if(entitiesPhosphorus[i].timer <= .0f) {
@@ -81,7 +81,7 @@ void Phosphorus::updatePlayerExplosion(const Player &player, bool monitorRunning
 
     // Updating all "ghost particles" alpha value
 	for(size_t i = 0; i < playerExplosionPhosphorus.size(); i++) {
-		playerExplosionPhosphorus[i].timer -= GetFrameTime() * DT_MULTIPLIER;
+		playerExplosionPhosphorus[i].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
 		if(playerExplosionPhosphorus[i].timer <= 0) {
 			playerExplosionPhosphorus.erase(playerExplosionPhosphorus.begin() + i);
@@ -108,7 +108,7 @@ void Phosphorus::updatePlayerLaser(const Player &player, bool monitorRunning) {
     // Updating all player lasers "ghost textures" alpha value
     for(size_t i = 0; i < playerLaserPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserPhosphorus[i].size(); j++) {
-            playerLaserPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
+            playerLaserPhosphorus[i][j].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
             if(playerLaserPhosphorus[i][j].timer <= .0f) {
                 playerLaserPhosphorus[i].erase(playerLaserPhosphorus[i].begin() + j);
@@ -145,7 +145,7 @@ void Phosphorus::updatePlayerLaserExplosion(const Player &player, bool monitorRu
     // Updating all players lasers explosion "ghost particles" alpha value
     for(size_t i = 0; i < playerLaserExplosionPhosphorus.size(); i++) {
         for(size_t j = 0; j < playerLaserExplosionPhosphorus[i].size(); j++) {
-            playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * DT_MULTIPLIER;
+            playerLaserExplosionPhosphorus[i][j].timer -= GetFrameTime() * PHOSPHORUS_DT_MULTIPLIER;
 
             if(playerLaserExplosionPhosphorus[i][j].timer <= .0f) {
                 playerLaserExplosionPhosphorus[i].erase(playerLaserExplosionPhosphorus[i].begin() + j);

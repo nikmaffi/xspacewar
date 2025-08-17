@@ -99,7 +99,7 @@ void Laser::draw(void) {
 	}
 
 	// Updating flickering effect timer
-	flickeringTimer += GetFrameTime() * flickeringMonitorEffect;
+	flickeringTimer += GetFrameTime();
 
 	// Resetting the flickering timer
 	if(flickeringTimer >= FLICKERING_INTERVAL) {
@@ -107,10 +107,10 @@ void Laser::draw(void) {
 
 		// Simulating flickering effect
 		// Adjusting texture alpha value based on previous one
-		if(color.a == FLICKERING_ALPHA) {
+		if(color.a != 255) {
 			color.a = 255;
 		} else {
-			color.a = FLICKERING_ALPHA;
+			color.a = __flickeringEffectValue;
 		}
 	}
 

@@ -28,18 +28,22 @@
 // ########################################################################################################################################
 
 // Global parameters
-extern bool   burnInMonitorEffect;
-extern bool   flickeringMonitorEffect;
-extern bool   shipProjectilesLimit;
-extern bool   shipFuelLimit;
-extern bool   blackHoleAsAnomaly;
-extern bool   retroStyleShips;
-extern bool   oneShotOneKill;
-extern bool   playSounds;
-extern size_t numPlayers;
+extern unsigned char __burnInEffectValue;
+extern unsigned char __flickeringEffectValue;
+extern bool          shipProjectilesLimit;
+extern bool          shipFuelLimit;
+extern bool          blackHoleAsAnomaly;
+extern bool          retroStyleShips;
+extern bool          oneShotOneKill;
+extern bool          playSounds;
+extern size_t        numPlayers;
 
 // Argv path used for locate game resources
-extern std::string gamePath;
+extern std::string   gamePath;
+
+// Knobs update functions
+void updateFlickeringEffectValue(float angle);
+void updateBurnInEffectValue(float angle);
 
 // Keyboard map [turbo, shoot, hyperspace, left, right]
 const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
@@ -66,9 +70,8 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 // Parameters
 #define FPS 30
 #define DT_MULTIPLIER 60.f
-#define PLAYER_P_DT_MULTIPLIER 15.f
 #define FLICKERING_INTERVAL .08f
-#define FLICKERING_ALPHA 150
+#define FLICKERING_MIN_ALPHA 0
 
 
 
@@ -82,7 +85,7 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define EXPLOSION_WAIT_TIME 5.f
 #define EXPLOSION_LARGE_TIME (EXPLOSION_WAIT_TIME - .43f)
 #define EXPLOSION_SMALL_TIME (EXPLOSION_WAIT_TIME - .23f)
-#define EXPLOSION_LARGE_PARTICLES 100
+#define EXPLOSION_LARGE_PARTICLES 150
 #define EXPLOSION_SMALL_PARTICLES 20
 
 
@@ -92,8 +95,8 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 // ########################################################################################################################################
 
 // Parameters
-#define PHOSPHORUS_BIG_TIMER 255.f
-#define PHOSPHORUS_SMALL_TIMER 100.f
+#define PHOSPHORUS_EFFECT_TRIG 1
+#define PHOSPHORUS_DT_MULTIPLIER 11.f
 #define PHOSPHORUS_COLOR(alpha) ((Color){139, 180, 60, (unsigned char)alpha})
 
 
@@ -106,16 +109,21 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define VT_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
 #define VT_CIRCLES_SEGS 64
 #define VT_MONITOR_RADIUS (WINDOW_HEIGHT / 2.f - 72 * WINDOW_WIDTH / WSCALE)
-#define VT_RING_RADIUS (VT_MONITOR_RADIUS + 25.f)
+#define VT_RING_RADIUS (VT_MONITOR_RADIUS + 25.f * WINDOW_WIDTH / WSCALE)
 #define VT_MONITOR_COLOR ((Color){34, 42, 22, 255})
 #define VT_RING_COLOR ((Color){198, 211, 216, 255})
-#define VT_CASE_COLOR ((Color){108, 122, 152, 255})
+#define VT_CASE_COLOR ((Color){60, 77, 95, 255})
+
+// Knobs
+#define KNOB_TEX_SCALE (.18f * WINDOW_WIDTH / WSCALE)
+#define KNOB_FLCK_POS ((Vector2){150.f * WINDOW_WIDTH / WSCALE, 200.f * WINDOW_HEIGHT / HSCALE})
+#define KNOB_BRIN_POS ((Vector2){150.f * WINDOW_WIDTH / WSCALE, 400.f * WINDOW_HEIGHT / HSCALE})
 
 // Trademark
 #define VT_TRADEMARK " NKM\nT7000"
 #define VT_TRADEMARK_POS(dim) ((Vector2){ \
-	(WINDOW_WIDTH - 350 - ((Vector2)dim).x / 2) * WINDOW_WIDTH / WSCALE, \
-	(WINDOW_HEIGHT - 150 - ((Vector2)dim).y / 2) * WINDOW_WIDTH / WSCALE \
+	(WINDOW_WIDTH - 350 * WINDOW_WIDTH / WSCALE - ((Vector2)dim).x / 2), \
+	(WINDOW_HEIGHT - 150 * WINDOW_HEIGHT / HSCALE - ((Vector2)dim).y / 2) \
 })
 #define VT_TRADEMARK_FONT_SIZE (75 * WINDOW_WIDTH / WSCALE)
 #define VT_TRADEMARK_COLOR ((Color){56, 57, 59, 255})
@@ -175,7 +183,7 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 // Attributes
 #define UI_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
-#define UI_FONT_SIZE (25 * WINDOW_WIDTH / WSCALE)
+#define UI_FONT_SIZE (26 * WINDOW_WIDTH / WSCALE)
 #define UI_TEXT_COLOR ((Color){135, 206, 250, 255})
 
 

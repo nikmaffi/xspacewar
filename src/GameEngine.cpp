@@ -2,6 +2,7 @@
 
 GameEngine::GameEngine(void) :
 icon(LoadImage((gamePath + "/res/img/logo.png").c_str())),
+knobTex(LoadTexture((gamePath + "/res/img/knob.png").c_str())),
 backgroundTex(LoadTexture((gamePath + "/res/img/space.png").c_str())),
 anomalyTex(LoadTexture((gamePath + "/res/img/anomaly.png").c_str())),
 playersTex{
@@ -20,6 +21,8 @@ interfaceFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), UI_FONT_SI
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
 monitor((gamePath + "/res/fonts/GoogleSansCode.ttf").c_str()),
+flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE),
+burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE),
 userInterface(
 	UI_POS,
     interfaceFont,
@@ -73,6 +76,17 @@ phosphorus(players, anomaly, userInterface) {
     // Loading game settings
 	loadData();
 
+    // Setting bilinear texture filter for better texture quality
+    SetTextureFilter(knobTex, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(backgroundTex, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(anomalyTex, TEXTURE_FILTER_BILINEAR);
+    for(int i = 0; i < MAX_PLAYERS; i++) {
+        if(i == 0 || !retroStyleShips) {
+            SetTextureFilter(lasersTex[i], TEXTURE_FILTER_BILINEAR);
+        }
+        SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
+    }
+
     // Resetting all players
     for(size_t i = 0; i < numPlayers; i++) {
         players[i].reset();
@@ -106,6 +120,10 @@ phosphorus(players, anomaly, userInterface) {
             players[i].reloadTextures(playersTex[i], lasersTex[i]);
         }
     }
+
+    // Changing knobs value based on read settings
+    flickeringKnob.setAngle((__flickeringEffectValue - 255) * 180.f / (FLICKERING_MIN_ALPHA - 255));
+    burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
 }
 
 GameEngine::~GameEngine() {
@@ -125,6 +143,7 @@ GameEngine::~GameEngine() {
     }
     UnloadTexture(anomalyTex);
     UnloadTexture(backgroundTex);
+    UnloadTexture(knobTex);
     UnloadImage(icon);
 
     // Closing subsystems
@@ -139,8 +158,8 @@ void GameEngine::loadData(void) {
     std::ifstream stream("./data/data.bin", std::ios::binary);
     
     //Reading game settings data
-	stream.read((char *)&burnInMonitorEffect, sizeof(bool));
-	stream.read((char *)&flickeringMonitorEffect, sizeof(bool));
+	stream.read((char *)&__burnInEffectValue, sizeof(unsigned char));
+	stream.read((char *)&__flickeringEffectValue, sizeof(unsigned char));
 	stream.read((char *)&shipProjectilesLimit, sizeof(bool));
 	stream.read((char *)&shipFuelLimit, sizeof(bool));
 	stream.read((char *)&blackHoleAsAnomaly, sizeof(bool));
@@ -156,8 +175,8 @@ void GameEngine::saveData(void) {
     std::ofstream stream("./data/data.bin", std::ios::binary);
 
     // Writing game settings data
-	stream.write((char *)&burnInMonitorEffect, sizeof(bool));
-	stream.write((char *)&flickeringMonitorEffect, sizeof(bool));
+	stream.write((char *)&__burnInEffectValue, sizeof(unsigned char));
+	stream.write((char *)&__flickeringEffectValue, sizeof(unsigned char));
 	stream.write((char *)&shipProjectilesLimit, sizeof(bool));
 	stream.write((char *)&shipFuelLimit, sizeof(bool));
 	stream.write((char *)&blackHoleAsAnomaly, sizeof(bool));
@@ -183,16 +202,14 @@ void GameEngine::eventsHandler(void) {
         }
     }
 
+    // Checking is any knob was selected
+    if(IsMouseButtonDown(0)) {
+        flickeringKnob.update(GetMousePosition(), updateFlickeringEffectValue);
+        burnInKnob.update(GetMousePosition(), updateBurnInEffectValue);
+    }
+
     if(!monitor.isRunning()) {
-        // Game appearance modifiers
-        if(IsKeyPressed(KEY_ONE)) {
-            burnInMonitorEffect = !burnInMonitorEffect;
-        }
-
-        if(IsKeyPressed(KEY_TWO)) {
-            flickeringMonitorEffect = !flickeringMonitorEffect;
-        }
-
+        // Game mechanics modifiers
         if(IsKeyPressed(KEY_THREE)) {
             // Unloading old textures
             for(int i = 0; i < MAX_PLAYERS; i++) {
@@ -235,7 +252,6 @@ void GameEngine::eventsHandler(void) {
             playSounds = !playSounds;
         }
 
-        // Game mechanics modifiers
         if(IsKeyPressed(KEY_L)) {
             shipProjectilesLimit = !shipProjectilesLimit;
 			oneShotOneKill = false;
@@ -289,7 +305,7 @@ void GameEngine::eventsHandler(void) {
 }
 
 void GameEngine::update(void) {
-	if(burnInMonitorEffect) {
+	if(__burnInEffectValue > PHOSPHORUS_EFFECT_TRIG) {
 		phosphorus.update(monitor.isRunning());
 	}
 
@@ -309,22 +325,14 @@ void GameEngine::update(void) {
             "[D] [RIGHT] [H] [L]   Right rotation\n"
             "[E] [RCTRL] [Y] [O]   Hyperspace\n\n"
 
-            "Appearance:\n"
-            "[1]                   Burn-in monitor effect     $f\n"
-            "[2]                   Flickering monitor effect  $f\n"
-            "[3]                   Retro' style ships         $f\n"
-            "[4]                   Sounds                     $f\n\n"
-
             "Game Modifiers:\n"
-            "[L]                   Unlimited projectiles      $f\n"
-            "[F]                   Unlimited fuel             $f\n"
-            "[S]                   Star as anomaly            $f\n"
-            "[K]                   One shot One kill          $f\n"
-            "[P]                   Number of players          $p\n\n",
-            burnInMonitorEffect,
-            flickeringMonitorEffect,
+            "[1]                   Retro' style ships         $f\n"
+            "[2]                   Unlimited projectiles      $f\n"
+            "[3]                   Unlimited fuel             $f\n"
+            "[4]                   Star as anomaly            $f\n"
+            "[5]                   One shot One kill          $f\n"
+            "[6]                   Number of players          $p\n\n",
             retroStyleShips,
-            playSounds,
             !shipProjectilesLimit,
             !shipFuelLimit,
             !blackHoleAsAnomaly,
@@ -351,7 +359,7 @@ void GameEngine::update(void) {
 
 void GameEngine::draw(void) {
     // Drawing burn-in effect
-	if(burnInMonitorEffect) {
+	if(__burnInEffectValue > PHOSPHORUS_EFFECT_TRIG) {
 		phosphorus.draw(monitor.isRunning());
 	}
 
@@ -369,6 +377,10 @@ void GameEngine::draw(void) {
 
     // Drawing video terminal
 	monitor.draw();
+
+    // Drawing the knobs
+    flickeringKnob.draw();
+    burnInKnob.draw();
 }
 
 void GameEngine::gameLoop(void) {

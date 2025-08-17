@@ -45,24 +45,19 @@ Vector2 Anomaly::attract(const Vector2 &objPos) const {
 }
 
 void Anomaly::draw(void) {
-	// Restoring alpha value if flickering effect is not active
-    if(!flickeringMonitorEffect) {
-        color.a = 255;
-    } else {
-		// Updating flickering effect timer
-		flickeringTimer += GetFrameTime();
+	// Updating flickering effect timer
+	flickeringTimer += GetFrameTime();
 
-		// Resetting the flickering timer
-		if(flickeringTimer >= FLICKERING_INTERVAL) {
-			flickeringTimer = .0f;
+	// Resetting the flickering timer
+	if(flickeringTimer >= FLICKERING_INTERVAL) {
+		flickeringTimer = .0f;
 
-			// Simulating flickering effect
-			// Adjusting texture alpha value based on previous one
-			if(color.a == FLICKERING_ALPHA) {
-				color.a = 255;
-			} else {
-				color.a = FLICKERING_ALPHA;
-			}
+		// Simulating flickering effect
+		// Adjusting texture alpha value based on previous one
+		if(color.a != 255) {
+			color.a = 255;
+		} else {
+			color.a = __flickeringEffectValue;
 		}
 	}
 
