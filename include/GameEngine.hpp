@@ -23,6 +23,7 @@ private:
 
 	// Assets - fonts
 	Font interfaceFont;
+	Font labelFont;
 
 	// Assets - sounds
 	Sound laserSound;

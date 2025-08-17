@@ -19,11 +19,12 @@ lasersTex{
     {}
 },
 interfaceFont(LoadFontEx((gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
+labelFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SIZE, 0, 0)),
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
 monitor(VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
-flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE),
-burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE),
+flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
+burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
 userInterface(
 	UI_POS,
     interfaceFont,
@@ -95,6 +96,7 @@ GameEngine::~GameEngine() {
     UnloadSound(laserSound);
 
     // Unloading fonts
+    UnloadFont(labelFont);
     UnloadFont(interfaceFont);
 
     // Unloading textures

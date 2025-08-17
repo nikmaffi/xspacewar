@@ -12,8 +12,13 @@ private:
     // Game objects atributes
     Texture texture;
     float scale;
+
+    // Label attributes
+    Font font;
+    std::string label;
+    Vector2 labelDim;
 public:
-    Knob(const Vector2 &pos, const Texture &texture, float scale);
+    Knob(const Vector2 &pos, const Texture &texture, float scale, const char *label, const Font &font);
     void setAngle(float angle);
     void update(const Vector2 &mousePos, void (*updateValue)(float));
     void draw(void);

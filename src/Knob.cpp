@@ -1,10 +1,13 @@
 #include <Knob.hpp>
 
-Knob::Knob(const Vector2 &pos, const Texture &texture, float scale):
+Knob::Knob(const Vector2 &pos, const Texture &texture, float scale, const char *label, const Font &font):
 pos(pos),
 angle(.0f),
 texture(texture),
-scale(scale) {
+scale(scale),
+font(font),
+label(label),
+labelDim(MeasureTextEx(font, label, font.baseSize, 0.f)) {
 }
 
 void Knob::setAngle(float angle) {
@@ -25,16 +28,32 @@ void Knob::update(const Vector2 &mousePos, void (*updateValue)(float)) {
         // Calculating the angle value based on mouse position
         angle = RAD2DEG * std::acos((pos.x - mousePos.x) / dist);
         updateValue(angle);
+    } else if(mousePos.x <= pos.x) {
+        angle = .0f;
+        updateValue(angle);
+    } else {
+        angle = 180.f;
+        updateValue(angle);
     }
 }
 
 void Knob::draw(void) {
+    // Drawing the knob label
+    DrawTextEx(
+        font,
+        label.c_str(),
+        (Vector2){pos.x - labelDim.x / 2, pos.y - labelDim.y / 2 - texture.height * scale / 1.9f},
+        font.baseSize,
+        0.f,
+        KNOB_FONT_COLOR
+    );
+
     // Drawing rescaled texture
     DrawTexturePro(
         texture,
-        {.0f, .0f, (float)texture.width, (float)texture.height},
-        {pos.x, pos.y, texture.width * scale, texture.height * scale},
-        {texture.width * scale / 2.f, texture.height * scale / 2.f},
+        (Rectangle){.0f, .0f, (float)texture.width, (float)texture.height},
+        (Rectangle){pos.x, pos.y, texture.width * scale, texture.height * scale},
+        (Vector2){texture.width * scale / 2.f, texture.height * scale / 2.f},
         angle,
         WHITE
     );
