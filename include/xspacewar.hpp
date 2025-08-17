@@ -30,12 +30,12 @@
 // Global parameters
 extern unsigned char __burnInEffectValue;
 extern unsigned char __flickeringEffectValue;
+extern float 		 __volumeValue;
 extern bool          shipProjectilesLimit;
 extern bool          shipFuelLimit;
 extern bool          blackHoleAsAnomaly;
 extern bool          retroStyleShips;
 extern bool          oneShotOneKill;
-extern bool          playSounds;
 extern size_t        numPlayers;
 
 // Argv path used for locate game resources
@@ -44,6 +44,7 @@ extern std::string   gamePath;
 // Knobs update functions
 void updateFlickeringEffectValue(float angle);
 void updateBurnInEffectValue(float angle);
+void updateVolumeValue(float angle);
 
 // Keyboard map [turbo, shoot, hyperspace, left, right]
 const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
@@ -118,6 +119,7 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define KNOB_TEX_SCALE (.18f * WINDOW_WIDTH / WSCALE)
 #define KNOB_FLCK_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 200.f * WINDOW_HEIGHT / HSCALE})
 #define KNOB_BRIN_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 420.f * WINDOW_HEIGHT / HSCALE})
+#define KNOB_VOLM_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 640.f * WINDOW_HEIGHT / HSCALE})
 #define KNOB_FONT_SIZE (40.f * WINDOW_WIDTH / WSCALE)
 #define KNOB_FONT_COLOR ((Color){36, 36, 38, 255})
 

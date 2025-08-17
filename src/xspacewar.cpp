@@ -3,12 +3,12 @@
 // Global parameters
 unsigned char __burnInEffectValue = 255;
 unsigned char __flickeringEffectValue = 150;
+float         __volumeValue = 0.f;
 bool          shipProjectilesLimit = true;
 bool          shipFuelLimit = true;
 bool          blackHoleAsAnomaly = false;
 bool          retroStyleShips = true;
 bool          oneShotOneKill = false;
-bool          playSounds = false;
 size_t        numPlayers = 2;
 
 // Argv path used for locate game resources
@@ -21,4 +21,8 @@ void updateFlickeringEffectValue(float angle) {
 
 void updateBurnInEffectValue(float angle) {
     __burnInEffectValue = angle / 180 * 255;
+}
+
+void updateVolumeValue(float angle) {
+    __volumeValue = angle / 180;
 }

@@ -33,6 +33,7 @@ private:
 	CRTMonitor monitor;
 	Knob flickeringKnob;
 	Knob burnInKnob;
+	Knob volumeKnob;
 	Interface userInterface;
 	Background background;
 	Anomaly anomaly;

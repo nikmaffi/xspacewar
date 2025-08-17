@@ -149,10 +149,8 @@ void Player::shoot(void) {
         )
 	);
 
-	// Playing laser firing sound if sound is enabled
-	if(playSounds) {
-		PlaySound(laserSound);
-	}
+	// Playing laser firing sound
+	PlaySound(laserSound);
 
 	return;
 }
@@ -206,10 +204,8 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 					// Setting hit player explosion timer in order to start explosion animation
 					others[k].explosionTimer = EXPLOSION_WAIT_TIME;
 
-					// Playing explosion sound if sound is enabled
-					if(playSounds) {
-						PlaySound(explosionSound);
-					}
+					// Playing explosion sound
+					PlaySound(explosionSound);
 
 					break;
 				} else {
@@ -302,10 +298,8 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 			explosionTimer = EXPLOSION_WAIT_TIME;
 			others[i].explosionTimer = EXPLOSION_WAIT_TIME;
 
-			// Playing explosion sound if enabled
-			if(playSounds) {
-				PlaySound(explosionSound);
-			}
+			// Playing explosion sound
+			PlaySound(explosionSound);
 
 			return;
 		}

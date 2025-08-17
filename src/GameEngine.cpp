@@ -25,6 +25,7 @@ explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
 monitor(VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
 flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
 burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
+volumeKnob(KNOB_VOLM_POS, knobTex, KNOB_TEX_SCALE, "Volume", labelFont),
 userInterface(
 	UI_POS,
     interfaceFont,
@@ -78,6 +79,7 @@ phosphorus(players, anomaly, userInterface) {
     // Setting knobs angle value
     flickeringKnob.setAngle((__flickeringEffectValue - 255) * 180.f / (FLICKERING_MIN_ALPHA - 255));
     burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
+    volumeKnob.setAngle(__volumeValue * 180);
 
     // Setting bilinear texture filter for better texture quality
     SetTextureFilter(knobTex, TEXTURE_FILTER_BILINEAR);
@@ -88,6 +90,10 @@ phosphorus(players, anomaly, userInterface) {
         SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
     }
     SetTextureFilter(lasersTex[0], TEXTURE_FILTER_BILINEAR);
+
+    // Settings sounds volume
+    SetSoundVolume(laserSound, __volumeValue);
+    SetSoundVolume(explosionSound, __volumeValue);
 }
 
 GameEngine::~GameEngine() {
@@ -133,8 +139,15 @@ void GameEngine::eventsHandler(void) {
 
     // Checking is any knob was selected
     if(IsMouseButtonDown(0)) {
-        flickeringKnob.update(GetMousePosition(), updateFlickeringEffectValue);
-        burnInKnob.update(GetMousePosition(), updateBurnInEffectValue);
+        Vector2 mouse = GetMousePosition();
+
+        flickeringKnob.update(mouse, updateFlickeringEffectValue);
+        burnInKnob.update(mouse, updateBurnInEffectValue);
+        volumeKnob.update(mouse, updateVolumeValue);
+
+        // Settings sounds volume
+        SetSoundVolume(laserSound, __volumeValue);
+        SetSoundVolume(explosionSound, __volumeValue);
     }
 
     if(!monitor.isRunning()) {
@@ -310,6 +323,7 @@ void GameEngine::draw(void) {
     // Drawing the knobs
     flickeringKnob.draw();
     burnInKnob.draw();
+    volumeKnob.draw();
 }
 
 void GameEngine::gameLoop(void) {
