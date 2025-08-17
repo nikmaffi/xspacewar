@@ -9,11 +9,11 @@ private:
 	bool running;
 
 	// Trademark attributes
-	Font font;
-	Vector2 trademarkSize;
+	Vector2 tmPos;
+	Texture tmTex;
+	float tmScale;
 public:
-	CRTMonitor(const char *fontRes);
-	~CRTMonitor();
+	CRTMonitor(const Vector2 &tmPos, const Texture &tmTex, float tmScale);
 	bool isRunning(void) const;
 	void powerOn(void);
 	void powerOff(void);

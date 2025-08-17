@@ -1,13 +1,10 @@
 #include <CRTMonitor.hpp>
 
-CRTMonitor::CRTMonitor(const char *fontRes) :
+CRTMonitor::CRTMonitor(const Vector2 &tmPos, const Texture &tmTex, float tmScale) :
 running(false),
-font(LoadFontEx(fontRes, VT_TRADEMARK_FONT_SIZE, 0, 0)),
-trademarkSize(MeasureTextEx(font, VT_TRADEMARK, VT_TRADEMARK_FONT_SIZE, 0.f)) {
-}
-
-CRTMonitor::~CRTMonitor() {
-    UnloadFont(font);
+tmPos(tmPos),
+tmTex(tmTex),
+tmScale(tmScale) {
 }
 
 bool CRTMonitor::isRunning(void) const {
@@ -30,5 +27,12 @@ void CRTMonitor::draw(void) {
     DrawRing(VT_POS, VT_MONITOR_RADIUS, VT_RING_RADIUS, .0f, 360.f, VT_CIRCLES_SEGS, VT_RING_COLOR);
 
     // Drawing system trademark
-    DrawTextEx(font, VT_TRADEMARK, VT_TRADEMARK_POS(trademarkSize), VT_TRADEMARK_FONT_SIZE, 0.f, VT_TRADEMARK_COLOR);
+    DrawTexturePro(
+        tmTex,
+        {0, 0, (float)tmTex.width, (float)tmTex.height},
+        {tmPos.x, tmPos.y, tmTex.width * tmScale, tmTex.height * tmScale},
+        {tmTex.width * tmScale / 2, tmTex.height * tmScale / 2},
+        0,
+        WHITE
+    );
 }

@@ -15,6 +15,7 @@ private:
 	// Assets - textures
 	Image icon;
 	Texture knobTex;
+	Texture trademarkTex;
 	Texture backgroundTex;
 	Texture anomalyTex;
 	Texture playersTex[MAX_PLAYERS];
@@ -36,10 +37,6 @@ private:
 	Anomaly anomaly;
 	Player players[MAX_PLAYERS];
 	Phosphorus phosphorus;
-
-	// Save/load game settings
-	void loadData(void);
-	void saveData(void);
 
 	// Game loop actions
 	void eventsHandler(void);

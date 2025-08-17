@@ -3,6 +3,7 @@
 GameEngine::GameEngine(void) :
 icon(LoadImage((gamePath + "/res/img/logo.png").c_str())),
 knobTex(LoadTexture((gamePath + "/res/img/knob.png").c_str())),
+trademarkTex(LoadTexture((gamePath + "/res/img/trademark.png").c_str())),
 backgroundTex(LoadTexture((gamePath + "/res/img/space.png").c_str())),
 anomalyTex(LoadTexture((gamePath + "/res/img/anomaly.png").c_str())),
 playersTex{
@@ -17,10 +18,10 @@ lasersTex{
     {},
     {}
 },
-interfaceFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
+interfaceFont(LoadFontEx((gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
-monitor((gamePath + "/res/fonts/GoogleSansCode.ttf").c_str()),
+monitor(VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
 flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE),
 burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE),
 userInterface(
@@ -73,57 +74,19 @@ players{
     )
 },
 phosphorus(players, anomaly, userInterface) {
-    // Loading game settings
-	loadData();
+    // Setting knobs angle value
+    flickeringKnob.setAngle((__flickeringEffectValue - 255) * 180.f / (FLICKERING_MIN_ALPHA - 255));
+    burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
 
     // Setting bilinear texture filter for better texture quality
     SetTextureFilter(knobTex, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(trademarkTex, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(backgroundTex, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(anomalyTex, TEXTURE_FILTER_BILINEAR);
     for(int i = 0; i < MAX_PLAYERS; i++) {
-        if(i == 0 || !retroStyleShips) {
-            SetTextureFilter(lasersTex[i], TEXTURE_FILTER_BILINEAR);
-        }
         SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
     }
-
-    // Resetting all players
-    for(size_t i = 0; i < numPlayers; i++) {
-        players[i].reset();
-    }
-
-    // Changing anomaly based on read settings
-	anomaly.changeAnomaly();
-
-    // Changing players and lasers appearance based on read settings
-    if(!retroStyleShips) {
-        // Unloading old textures
-        for(int i = 0; i < MAX_PLAYERS; i++) {
-            if(i == 0) {
-                UnloadTexture(lasersTex[i]);
-            }
-            UnloadTexture(playersTex[i]);
-        }
-
-        // Loading new textures
-        playersTex[0] = LoadTexture((gamePath + "/res/img/player_blue.png").c_str());
-        playersTex[1] = LoadTexture((gamePath + "/res/img/player_red.png").c_str());
-        playersTex[2] = LoadTexture((gamePath + "/res/img/player_empire.png").c_str());
-        playersTex[3] = LoadTexture((gamePath + "/res/img/player_rebellion.png").c_str());
-        lasersTex[0] = LoadTexture((gamePath + "/res/img/laser_blue.png").c_str());
-        lasersTex[1] = LoadTexture((gamePath + "/res/img/laser_red.png").c_str());
-        lasersTex[2] = LoadTexture((gamePath + "/res/img/laser_green.png").c_str());
-        lasersTex[3] = LoadTexture((gamePath + "/res/img/laser_magenta.png").c_str());
-
-        // Setting new textures
-        for(int i = 0; i < MAX_PLAYERS; i++) {
-            players[i].reloadTextures(playersTex[i], lasersTex[i]);
-        }
-    }
-
-    // Changing knobs value based on read settings
-    flickeringKnob.setAngle((__flickeringEffectValue - 255) * 180.f / (FLICKERING_MIN_ALPHA - 255));
-    burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
+    SetTextureFilter(lasersTex[0], TEXTURE_FILTER_BILINEAR);
 }
 
 GameEngine::~GameEngine() {
@@ -136,56 +99,20 @@ GameEngine::~GameEngine() {
 
     // Unloading textures
     for(int i = 0; i < MAX_PLAYERS; i++) {
+        UnloadTexture(playersTex[i]);
         if(i == 0 || !retroStyleShips) {
             UnloadTexture(lasersTex[i]);
         }
-        UnloadTexture(playersTex[i]);
     }
     UnloadTexture(anomalyTex);
     UnloadTexture(backgroundTex);
+    UnloadTexture(trademarkTex);
     UnloadTexture(knobTex);
     UnloadImage(icon);
 
     // Closing subsystems
     CloseAudioDevice();
     CloseWindow();
-
-    // Saving game settings
-    saveData();
-}
-
-void GameEngine::loadData(void) {
-    std::ifstream stream("./data/data.bin", std::ios::binary);
-    
-    //Reading game settings data
-	stream.read((char *)&__burnInEffectValue, sizeof(unsigned char));
-	stream.read((char *)&__flickeringEffectValue, sizeof(unsigned char));
-	stream.read((char *)&shipProjectilesLimit, sizeof(bool));
-	stream.read((char *)&shipFuelLimit, sizeof(bool));
-	stream.read((char *)&blackHoleAsAnomaly, sizeof(bool));
-	stream.read((char *)&retroStyleShips, sizeof(bool));
-	stream.read((char *)&oneShotOneKill, sizeof(bool));
-    stream.read((char *)&playSounds, sizeof(bool));
-    stream.read((char *)&numPlayers, sizeof(int));
-
-	stream.close();
-}
-
-void GameEngine::saveData(void) {
-    std::ofstream stream("./data/data.bin", std::ios::binary);
-
-    // Writing game settings data
-	stream.write((char *)&__burnInEffectValue, sizeof(unsigned char));
-	stream.write((char *)&__flickeringEffectValue, sizeof(unsigned char));
-	stream.write((char *)&shipProjectilesLimit, sizeof(bool));
-	stream.write((char *)&shipFuelLimit, sizeof(bool));
-	stream.write((char *)&blackHoleAsAnomaly, sizeof(bool));
-	stream.write((char *)&retroStyleShips, sizeof(bool));
-	stream.write((char *)&oneShotOneKill, sizeof(bool));
-    stream.write((char *)&playSounds, sizeof(bool));
-    stream.write((char *)&numPlayers, sizeof(int));
-
-	stream.close();
 }
 
 void GameEngine::eventsHandler(void) {
@@ -210,7 +137,7 @@ void GameEngine::eventsHandler(void) {
 
     if(!monitor.isRunning()) {
         // Game mechanics modifiers
-        if(IsKeyPressed(KEY_THREE)) {
+        if(IsKeyPressed(KEY_ONE)) {
             // Unloading old textures
             for(int i = 0; i < MAX_PLAYERS; i++) {
                 if(i == 0 || !retroStyleShips) {
@@ -246,27 +173,31 @@ void GameEngine::eventsHandler(void) {
                     players[i].reloadTextures(playersTex[i], lasersTex[i]);
                 }
             }
+
+            // Resetting bilinear texture filter for new loaded textures
+            for(int i = 0; i < MAX_PLAYERS; i++) {
+                SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
+                if(i == 0 || !retroStyleShips) {
+                    SetTextureFilter(lasersTex[i], TEXTURE_FILTER_BILINEAR);
+                }
+            }
         }
 
-        if(IsKeyPressed(KEY_FOUR)) {
-            playSounds = !playSounds;
-        }
-
-        if(IsKeyPressed(KEY_L)) {
+        if(IsKeyPressed(KEY_TWO)) {
             shipProjectilesLimit = !shipProjectilesLimit;
 			oneShotOneKill = false;
         }
 
-        if(IsKeyPressed(KEY_F)) {
+        if(IsKeyPressed(KEY_THREE)) {
             shipFuelLimit = !shipFuelLimit;
         }
 
-        if(IsKeyPressed(KEY_S)) {
+        if(IsKeyPressed(KEY_FOUR)) {
             blackHoleAsAnomaly = !blackHoleAsAnomaly;
             anomaly.changeAnomaly();
         }
 
-        if(IsKeyPressed(KEY_K)) {
+        if(IsKeyPressed(KEY_FIVE)) {
             oneShotOneKill = !oneShotOneKill;
             shipProjectilesLimit = true;
 
@@ -275,7 +206,7 @@ void GameEngine::eventsHandler(void) {
             }
         }
 
-        if(IsKeyPressed(KEY_P)) {
+        if(IsKeyPressed(KEY_SIX)) {
             numPlayers = (numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
         }
     } else {
@@ -311,27 +242,27 @@ void GameEngine::update(void) {
 
 	if(!monitor.isRunning()) {
         userInterface.update(
-            "                     XSPACEWAR!\n"
-            "                  by Nicolo' Maffi\n\n"
+            "                    XSPACEWAR!\n"
+            "                 by Nicolo' Maffi\n\n"
 
             "System Keys:\n"
-            "[ENTER]               Start/Reset game\n"
-            "[ESC]                 Quit\n\n"
+            "[ENTER]                Start/Reset game\n"
+            "[ESC]                  Quit\n\n"
 
             "Spaceship Keys:\n"
-            "[W] [UP]    [T] [I]   Shoot\n"
-            "[S] [DOWN]  [G] [K]   Turbo\n"
-            "[A] [LEFT]  [F] [J]   Left rotation\n"
-            "[D] [RIGHT] [H] [L]   Right rotation\n"
-            "[E] [RCTRL] [Y] [O]   Hyperspace\n\n"
+            "[W] [UP    ] [T] [I]   Shoot\n"
+            "[S] [DOWN  ] [G] [K]   Turbo\n"
+            "[A] [LEFT  ] [F] [J]   Left rotation\n"
+            "[D] [RIGHT ] [H] [L]   Right rotation\n"
+            "[E] [RSHIFT] [Y] [O]   Hyperspace\n\n"
 
             "Game Modifiers:\n"
-            "[1]                   Retro' style ships         $f\n"
-            "[2]                   Unlimited projectiles      $f\n"
-            "[3]                   Unlimited fuel             $f\n"
-            "[4]                   Star as anomaly            $f\n"
-            "[5]                   One shot One kill          $f\n"
-            "[6]                   Number of players          $p\n\n",
+            "[1]                    Retro' style ships      $f\n"
+            "[2]                    Unlimited projectiles   $f\n"
+            "[3]                    Unlimited fuel          $f\n"
+            "[4]                    Star as anomaly         $f\n"
+            "[5]                    One shot One kill       $f\n"
+            "[6]                    Number of players       $p\n\n",
             retroStyleShips,
             !shipProjectilesLimit,
             !shipFuelLimit,

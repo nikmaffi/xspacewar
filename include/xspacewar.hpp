@@ -48,7 +48,7 @@ void updateBurnInEffectValue(float angle);
 // Keyboard map [turbo, shoot, hyperspace, left, right]
 const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 	{KEY_S, KEY_W, KEY_E, KEY_A, KEY_D},
-	{KEY_DOWN, KEY_UP, KEY_RIGHT_CONTROL, KEY_LEFT, KEY_RIGHT},
+	{KEY_DOWN, KEY_UP, KEY_RIGHT_SHIFT, KEY_LEFT, KEY_RIGHT},
 	{KEY_G, KEY_T, KEY_Y, KEY_F, KEY_H},
 	{KEY_K, KEY_I, KEY_O, KEY_J, KEY_L},
 };
@@ -116,17 +116,12 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 // Knobs
 #define KNOB_TEX_SCALE (.18f * WINDOW_WIDTH / WSCALE)
-#define KNOB_FLCK_POS ((Vector2){150.f * WINDOW_WIDTH / WSCALE, 200.f * WINDOW_HEIGHT / HSCALE})
-#define KNOB_BRIN_POS ((Vector2){150.f * WINDOW_WIDTH / WSCALE, 400.f * WINDOW_HEIGHT / HSCALE})
+#define KNOB_FLCK_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 200.f * WINDOW_HEIGHT / HSCALE})
+#define KNOB_BRIN_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 400.f * WINDOW_HEIGHT / HSCALE})
 
 // Trademark
-#define VT_TRADEMARK " NKM\nT7000"
-#define VT_TRADEMARK_POS(dim) ((Vector2){ \
-	(WINDOW_WIDTH - 350 * WINDOW_WIDTH / WSCALE - ((Vector2)dim).x / 2), \
-	(WINDOW_HEIGHT - 150 * WINDOW_HEIGHT / HSCALE - ((Vector2)dim).y / 2) \
-})
-#define VT_TRADEMARK_FONT_SIZE (75 * WINDOW_WIDTH / WSCALE)
-#define VT_TRADEMARK_COLOR ((Color){56, 57, 59, 255})
+#define VT_TRADEMARK_SCALE (.25f * WINDOW_WIDTH / WSCALE)
+#define VT_TRADEMARK_POS ((Vector2){WINDOW_WIDTH - 270 * WINDOW_WIDTH / WSCALE, WINDOW_HEIGHT - 150 * WINDOW_HEIGHT / HSCALE})
 
 
 
