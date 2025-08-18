@@ -61,8 +61,9 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 // ############################################################################################################################
 
 // Game window
-#define WINDOW_WIDTH ((float)GetMonitorWidth(0))
-#define WINDOW_HEIGHT ((float)GetMonitorHeight(0))
+inline float WINDOW_WIDTH;
+inline float WINDOW_HEIGHT;
+
 #define WINDOW_CENTER_X (WINDOW_WIDTH / 2)
 #define WINDOW_CENTER_Y (WINDOW_HEIGHT / 2)
 #define SCALE_FACTOR ((float)std::fmin(WINDOW_WIDTH / 1920, WINDOW_HEIGHT / 1080))

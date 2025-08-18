@@ -22,7 +22,7 @@ interfaceFont(LoadFontEx((gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZ
 labelFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SIZE, 0, 0)),
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
-monitor(VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
+monitor(VT_POS, VT_MONITOR_RADIUS, VT_RING_RADIUS, VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
 flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
 burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
 volumeKnob(KNOB_VOLM_POS, knobTex, KNOB_TEX_SCALE, "Volume", labelFont),
@@ -116,7 +116,9 @@ GameEngine::~GameEngine() {
 Texture GameEngine::LoadSmoothTexture(const char *fileName) {
     Texture texture = LoadTexture((gamePath + fileName).c_str());
 
+    // Generating texture mipmaps
     GenTextureMipmaps(&texture);
+    // Settings bilinear filter for better quality
     SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
 
     return texture;

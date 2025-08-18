@@ -1,18 +1,16 @@
 #include <GameEngine.hpp>
 
 void initWindow(void) {
-    int w, h;
-
     // Starting a small window to obtain monitor width and height
     InitWindow(1, 1, "");
-    w = WINDOW_WIDTH;
-    h = WINDOW_HEIGHT;
+    WINDOW_WIDTH = (float)GetMonitorWidth(0);
+    WINDOW_HEIGHT = (float)GetMonitorHeight(0);
     CloseWindow();
 
     // Setting fullscreen flag
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
     // Initializing real window with title
-    InitWindow(w, h, "XSpacewar!");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "XSpacewar!");
 }
 
 int main(int argc, char *argv[]) {

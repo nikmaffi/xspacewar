@@ -8,12 +8,17 @@ private:
 	// Misc attributes
 	bool running;
 
+	// Physics attributes
+	Vector2 pos;
+	float inRadius;
+	float outRadius;
+
 	// Trademark attributes
 	Vector2 tmPos;
 	Texture tmTex;
 	float tmScale;
 public:
-	CRTMonitor(const Vector2 &tmPos, const Texture &tmTex, float tmScale);
+	CRTMonitor(const Vector2 &pos, float inRadius, float ousRadius, const Vector2 &tmPos, const Texture &tmTex, float tmScale);
 	bool isRunning(void) const;
 	void powerOn(void);
 	void powerOff(void);
