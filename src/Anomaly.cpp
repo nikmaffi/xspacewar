@@ -34,7 +34,7 @@ Vector2 Anomaly::attract(const Vector2 &objPos) const {
 	// Orbit equation: \vec{a} = (G * m / |d|^3) * \vec{d}
 	// EPSILON is used to avoid divisions by zero
 	Vector2 dist = (Vector2){pos.x - objPos.x, pos.y - objPos.y};
-	float distMag = std::sqrt(dist.x * dist.x + dist.y * dist.y) * WSCALE / WINDOW_WIDTH + EPSILON;
+	float distMag = std::sqrt(dist.x * dist.x + dist.y * dist.y) * SCALE_FACTOR + EPSILON;
 	float forceMag = G * this->mass / (distMag * distMag * distMag);
 
 	// Computing the acceleration

@@ -8,9 +8,9 @@
 #include <random>
 #include <fstream>
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // GENERICS
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Parameters
 #define NUM_ACTIONS 5
@@ -23,9 +23,9 @@
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // GLOBALS
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Global parameters
 extern unsigned char __burnInEffectValue;
@@ -56,17 +56,16 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // GRAPHICS
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Game window
 #define WINDOW_WIDTH ((float)GetMonitorWidth(0))
 #define WINDOW_HEIGHT ((float)GetMonitorHeight(0))
-#define WINDOW_CENTER_X (WINDOW_WIDTH / 2.f)
-#define WINDOW_CENTER_Y (WINDOW_HEIGHT / 2.f)
-#define WSCALE 1920.f
-#define HSCALE 1080.f
+#define WINDOW_CENTER_X (WINDOW_WIDTH / 2)
+#define WINDOW_CENTER_Y (WINDOW_HEIGHT / 2)
+#define SCALE_FACTOR ((float)std::fmin(WINDOW_WIDTH / 1920, WINDOW_HEIGHT / 1080))
 
 // Parameters
 #define FPS 30
@@ -76,13 +75,13 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // EXPLOSIONS
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Parameters
 #define EXPLOSION_COLOR WHITE
-#define EXPLOSION_PARTICLE_VELOCITY (3.1f * GetFrameTime() * DT_MULTIPLIER * WINDOW_WIDTH / WSCALE)
+#define EXPLOSION_PARTICLE_VELOCITY (3.1f * GetFrameTime() * DT_MULTIPLIER * SCALE_FACTOR)
 #define EXPLOSION_WAIT_TIME 5.f
 #define EXPLOSION_LARGE_TIME (EXPLOSION_WAIT_TIME - .43f)
 #define EXPLOSION_SMALL_TIME (EXPLOSION_WAIT_TIME - .23f)
@@ -91,9 +90,9 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // PHOSPHORUS
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Parameters
 #define PHOSPHORUS_EFFECT_TRIG 1
@@ -102,39 +101,39 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // VIDEO TERMINAL
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Basic structure
 #define VT_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
 #define VT_CIRCLES_SEGS 64
-#define VT_MONITOR_RADIUS (WINDOW_HEIGHT / 2.f - 72 * WINDOW_WIDTH / WSCALE)
-#define VT_RING_RADIUS (VT_MONITOR_RADIUS + 25.f * WINDOW_WIDTH / WSCALE)
+#define VT_MONITOR_RADIUS (WINDOW_HEIGHT / 2 - 72 * SCALE_FACTOR)
+#define VT_RING_RADIUS (VT_MONITOR_RADIUS + 25 * SCALE_FACTOR)
 #define VT_MONITOR_COLOR ((Color){34, 42, 22, 255})
 #define VT_RING_COLOR ((Color){198, 211, 216, 255})
 #define VT_CASE_COLOR ((Color){60, 77, 95, 255})
 
 // Knobs
-#define KNOB_TEX_SCALE (.18f * WINDOW_WIDTH / WSCALE)
-#define KNOB_FLCK_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 200.f * WINDOW_HEIGHT / HSCALE})
-#define KNOB_BRIN_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 420.f * WINDOW_HEIGHT / HSCALE})
-#define KNOB_VOLM_POS ((Vector2){230.f * WINDOW_WIDTH / WSCALE, 640.f * WINDOW_HEIGHT / HSCALE})
-#define KNOB_FONT_SIZE (40.f * WINDOW_WIDTH / WSCALE)
+#define KNOB_TEX_SCALE (.18f * SCALE_FACTOR)
+#define KNOB_FLCK_POS ((Vector2){230 * SCALE_FACTOR, 200 * SCALE_FACTOR})
+#define KNOB_BRIN_POS ((Vector2){230 * SCALE_FACTOR, 420 * SCALE_FACTOR})
+#define KNOB_VOLM_POS ((Vector2){230 * SCALE_FACTOR, 640 * SCALE_FACTOR})
+#define KNOB_FONT_SIZE (40 * SCALE_FACTOR)
 #define KNOB_FONT_COLOR ((Color){36, 36, 38, 255})
 
 // Trademark
-#define VT_TRADEMARK_SCALE (.25f * WINDOW_WIDTH / WSCALE)
-#define VT_TRADEMARK_POS ((Vector2){WINDOW_WIDTH - 270 * WINDOW_WIDTH / WSCALE, WINDOW_HEIGHT - 150 * WINDOW_HEIGHT / HSCALE})
+#define VT_TRADEMARK_SCALE (.25f * SCALE_FACTOR)
+#define VT_TRADEMARK_POS ((Vector2){WINDOW_WIDTH - 270 * SCALE_FACTOR, WINDOW_HEIGHT - 150 * SCALE_FACTOR})
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // PLAYER
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Parameters
-#define PLAYER_SPRINT (.0005f * GetFrameTime() * DT_MULTIPLIER * WINDOW_WIDTH / WSCALE)
+#define PLAYER_SPRINT (.0005f * GetFrameTime() * DT_MULTIPLIER * SCALE_FACTOR)
 #define PLAYER_ROTATION_SPEED (1.5f * GetFrameTime() * DT_MULTIPLIER)
 #define PLAYER_MAX_PROJECTILES 30
 #define PLAYER_MAX_FUEL (FPS * 75)
@@ -146,10 +145,10 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define PLAYER_HYPERSPACE_READY (PLAYER_HYPERSPACE_RELOADING + 10)
 
 // Start positions
-#define PLAYER_1_START_POS ((Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE})
-#define PLAYER_2_START_POS ((Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE})
-#define PLAYER_3_START_POS ((Vector2){WINDOW_CENTER_X - 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y - 290.f * WINDOW_HEIGHT / HSCALE})
-#define PLAYER_4_START_POS ((Vector2){WINDOW_CENTER_X + 290.f * WINDOW_WIDTH / WSCALE, WINDOW_CENTER_Y + 290.f * WINDOW_HEIGHT / HSCALE})
+#define PLAYER_1_START_POS ((Vector2){WINDOW_CENTER_X - 290 * SCALE_FACTOR, WINDOW_CENTER_Y + 290 * SCALE_FACTOR})
+#define PLAYER_2_START_POS ((Vector2){WINDOW_CENTER_X + 290 * SCALE_FACTOR, WINDOW_CENTER_Y - 290 * SCALE_FACTOR})
+#define PLAYER_3_START_POS ((Vector2){WINDOW_CENTER_X - 290 * SCALE_FACTOR, WINDOW_CENTER_Y - 290 * SCALE_FACTOR})
+#define PLAYER_4_START_POS ((Vector2){WINDOW_CENTER_X + 290 * SCALE_FACTOR, WINDOW_CENTER_Y + 290 * SCALE_FACTOR})
 
 // Start angles
 #define PLAYER_1_START_ANGLE 270.f
@@ -158,42 +157,43 @@ const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 #define PLAYER_4_START_ANGLE 270.f
 
 // Attributes
-#define PLAYER_TEX_SCALE (.8f * WINDOW_WIDTH / WSCALE)
+#define PLAYER_TEX_SCALE (.8f * SCALE_FACTOR)
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // LASER
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Parameters
-#define LASER_SPEED (2.f * GetFrameTime() * DT_MULTIPLIER * WINDOW_WIDTH / WSCALE)
+#define LASER_SPEED (2 * GetFrameTime() * DT_MULTIPLIER * SCALE_FACTOR)
 #define LASER_ENERGY 50.f
 #define LASER_DISPERSION_RATE (.18f * GetFrameTime() * DT_MULTIPLIER)
 
 // Attributes
-#define LASER_TEX_SCALE (.5f * WINDOW_WIDTH / WSCALE)
+#define LASER_TEX_SCALE (.5f * SCALE_FACTOR)
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // USER INTERFACE
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Attributes
 #define UI_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
-#define UI_FONT_SIZE (25 * WINDOW_WIDTH / WSCALE)
+#define UI_FONT_SIZE (25 * SCALE_FACTOR)
 #define UI_TEXT_COLOR ((Color){135, 206, 250, 255})
 
 
 
-// ########################################################################################################################################
+// ############################################################################################################################
 // ANOMALY
-// ########################################################################################################################################
+// ############################################################################################################################
 
 // Attributes
 #define ANOMALY_MASS 1e12
 #define ANOMALY_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
-#define ANOMALY_COLLISION_RADIUS (2 * WINDOW_WIDTH / WSCALE)
+#define ANOMALY_COLLISION_RADIUS (2 * SCALE_FACTOR)
+#define ANOMALY_SCALE SCALE_FACTOR
 
 #endif //__XSPACEWAR_HPP__

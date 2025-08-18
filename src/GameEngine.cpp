@@ -35,7 +35,7 @@ background(backgroundTex),
 anomaly(
     ANOMALY_POS,
     anomalyTex,
-    WINDOW_WIDTH / WSCALE
+    ANOMALY_SCALE
 ),
 players{
     Player(
