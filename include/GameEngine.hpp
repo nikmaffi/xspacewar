@@ -40,6 +40,9 @@ private:
 	Player players[MAX_PLAYERS];
 	Phosphorus phosphorus;
 
+	// Misc functions
+	Texture LoadSmoothTexture(const char *fileName);
+
 	// Game loop actions
 	void eventsHandler(void);
 	void update(void);

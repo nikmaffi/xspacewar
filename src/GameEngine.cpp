@@ -1,19 +1,19 @@
 #include <GameEngine.hpp>
 
 GameEngine::GameEngine(void) :
-icon(LoadImage((gamePath + "/res/img/logo.png").c_str())),
-knobTex(LoadTexture((gamePath + "/res/img/knob.png").c_str())),
-trademarkTex(LoadTexture((gamePath + "/res/img/trademark.png").c_str())),
-backgroundTex(LoadTexture((gamePath + "/res/img/space.png").c_str())),
-anomalyTex(LoadTexture((gamePath + "/res/img/anomaly.png").c_str())),
+icon(LoadImage("/res/img/logo.png")),
+knobTex(LoadSmoothTexture("/res/img/knob.png")),
+trademarkTex(LoadSmoothTexture("/res/img/trademark.png")),
+backgroundTex(LoadSmoothTexture("/res/img/space.png")),
+anomalyTex(LoadSmoothTexture("/res/img/anomaly.png")),
 playersTex{
-    LoadTexture((gamePath + "/res/img/player_1.png").c_str()),
-    LoadTexture((gamePath + "/res/img/player_2.png").c_str()),
-    LoadTexture((gamePath + "/res/img/player_3.png").c_str()),
-    LoadTexture((gamePath + "/res/img/player_4.png").c_str())
+    LoadSmoothTexture("/res/img/player_1.png"),
+    LoadSmoothTexture("/res/img/player_2.png"),
+    LoadSmoothTexture("/res/img/player_3.png"),
+    LoadSmoothTexture("/res/img/player_4.png")
 },
 lasersTex{
-    LoadTexture((gamePath + "/res/img/laser.png").c_str()),
+    LoadSmoothTexture("/res/img/laser.png"),
     {},
     {},
     {}
@@ -81,16 +81,6 @@ phosphorus(players, anomaly, userInterface) {
     burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
     volumeKnob.setAngle(__volumeValue * 180);
 
-    // Setting bilinear texture filter for better texture quality
-    SetTextureFilter(knobTex, TEXTURE_FILTER_BILINEAR);
-    SetTextureFilter(trademarkTex, TEXTURE_FILTER_BILINEAR);
-    SetTextureFilter(backgroundTex, TEXTURE_FILTER_BILINEAR);
-    SetTextureFilter(anomalyTex, TEXTURE_FILTER_BILINEAR);
-    for(int i = 0; i < MAX_PLAYERS; i++) {
-        SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
-    }
-    SetTextureFilter(lasersTex[0], TEXTURE_FILTER_BILINEAR);
-
     // Settings sounds volume
     SetSoundVolume(laserSound, __volumeValue);
     SetSoundVolume(explosionSound, __volumeValue);
@@ -121,6 +111,15 @@ GameEngine::~GameEngine() {
     // Closing subsystems
     CloseAudioDevice();
     CloseWindow();
+}
+
+Texture GameEngine::LoadSmoothTexture(const char *fileName) {
+    Texture texture = LoadTexture((gamePath + fileName).c_str());
+
+    GenTextureMipmaps(&texture);
+    SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+
+    return texture;
 }
 
 void GameEngine::eventsHandler(void) {
@@ -165,35 +164,27 @@ void GameEngine::eventsHandler(void) {
 
             // Loading new textures based on selected settings
             if(retroStyleShips) {
-                playersTex[0] = LoadTexture((gamePath + "/res/img/player_1.png").c_str());
-                playersTex[1] = LoadTexture((gamePath + "/res/img/player_2.png").c_str());
-                playersTex[2] = LoadTexture((gamePath + "/res/img/player_3.png").c_str());
-                playersTex[3] = LoadTexture((gamePath + "/res/img/player_4.png").c_str());
-                lasersTex[0] = LoadTexture((gamePath + "/res/img/laser.png").c_str());
+                playersTex[0] = LoadSmoothTexture("/res/img/player_1.png");
+                playersTex[1] = LoadSmoothTexture("/res/img/player_2.png");
+                playersTex[2] = LoadSmoothTexture("/res/img/player_3.png");
+                playersTex[3] = LoadSmoothTexture("/res/img/player_4.png");
+                lasersTex[0] = LoadSmoothTexture("/res/img/laser.png");
 
                 for(int i = 0; i < MAX_PLAYERS; i++) {
                     players[i].reloadTextures(playersTex[i], lasersTex[0]);
                 }
             } else {
-                playersTex[0] = LoadTexture((gamePath + "/res/img/player_blue.png").c_str());
-                playersTex[1] = LoadTexture((gamePath + "/res/img/player_red.png").c_str());
-                playersTex[2] = LoadTexture((gamePath + "/res/img/player_empire.png").c_str());
-                playersTex[3] = LoadTexture((gamePath + "/res/img/player_rebellion.png").c_str());
-                lasersTex[0] = LoadTexture((gamePath + "/res/img/laser_blue.png").c_str());
-                lasersTex[1] = LoadTexture((gamePath + "/res/img/laser_red.png").c_str());
-                lasersTex[2] = LoadTexture((gamePath + "/res/img/laser_green.png").c_str());
-                lasersTex[3] = LoadTexture((gamePath + "/res/img/laser_magenta.png").c_str());
+                playersTex[0] = LoadSmoothTexture("/res/img/player_blue.png");
+                playersTex[1] = LoadSmoothTexture("/res/img/player_red.png");
+                playersTex[2] = LoadSmoothTexture("/res/img/player_empire.png");
+                playersTex[3] = LoadSmoothTexture("/res/img/player_rebellion.png");
+                lasersTex[0] = LoadSmoothTexture("/res/img/laser_blue.png");
+                lasersTex[1] = LoadSmoothTexture("/res/img/laser_red.png");
+                lasersTex[2] = LoadSmoothTexture("/res/img/laser_green.png");
+                lasersTex[3] = LoadSmoothTexture("/res/img/laser_magenta.png");
 
                 for(int i = 0; i < MAX_PLAYERS; i++) {
                     players[i].reloadTextures(playersTex[i], lasersTex[i]);
-                }
-            }
-
-            // Resetting bilinear texture filter for new loaded textures
-            for(int i = 0; i < MAX_PLAYERS; i++) {
-                SetTextureFilter(playersTex[i], TEXTURE_FILTER_BILINEAR);
-                if(i == 0 || !retroStyleShips) {
-                    SetTextureFilter(lasersTex[i], TEXTURE_FILTER_BILINEAR);
                 }
             }
         }
