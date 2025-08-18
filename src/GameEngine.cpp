@@ -2,6 +2,7 @@
 
 GameEngine::GameEngine(void) :
 icon(LoadImage("/res/img/logo.png")),
+monitorTex(LoadSmoothTexture("/res/img/monitor.png")),
 knobTex(LoadSmoothTexture("/res/img/knob.png")),
 trademarkTex(LoadSmoothTexture("/res/img/trademark.png")),
 backgroundTex(LoadSmoothTexture("/res/img/space.png")),
@@ -22,7 +23,7 @@ interfaceFont(LoadFontEx((gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZ
 labelFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SIZE, 0, 0)),
 laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
-monitor(VT_POS, VT_MONITOR_RADIUS, VT_RING_RADIUS, VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
+monitor(VT_POS, monitorTex, VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
 flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
 burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
 volumeKnob(KNOB_VOLM_POS, knobTex, KNOB_TEX_SCALE, "Volume", labelFont),
@@ -106,6 +107,7 @@ GameEngine::~GameEngine() {
     UnloadTexture(backgroundTex);
     UnloadTexture(trademarkTex);
     UnloadTexture(knobTex);
+    UnloadTexture(monitorTex);
     UnloadImage(icon);
 
     // Closing subsystems

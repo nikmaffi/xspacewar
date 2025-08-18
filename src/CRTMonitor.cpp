@@ -1,10 +1,9 @@
 #include <CRTMonitor.hpp>
 
-CRTMonitor::CRTMonitor(const Vector2 &pos, float inRadius, float outRadius, const Vector2 &tmPos, const Texture &tmTex, float tmScale) :
+CRTMonitor::CRTMonitor(const Vector2 &pos, const Texture &texture, const Vector2 &tmPos, const Texture &tmTex, float tmScale) :
 running(false),
 pos(pos),
-inRadius(inRadius),
-outRadius(outRadius),
+texture(texture),
 tmPos(tmPos),
 tmTex(tmTex),
 tmScale(tmScale) {
@@ -23,11 +22,15 @@ void CRTMonitor::powerOff(void) {
 }
 
 void CRTMonitor::draw(void) {
-    // Drawing monitor case
-    DrawRing(pos, inRadius, WINDOW_WIDTH, .0f, 360.f, VT_CIRCLES_SEGS, VT_CASE_COLOR);
-
-    // Drawing monitor silver ring around the screen
-    DrawRing(pos, inRadius, outRadius, .0f, 360.f, VT_CIRCLES_SEGS, VT_RING_COLOR);
+    // Drawing monitor texture
+    DrawTexturePro(
+        texture,
+        {0, 0, (float)texture.width, (float)texture.height},
+        {pos.x, pos.y, WINDOW_WIDTH, WINDOW_HEIGHT},
+        {WINDOW_CENTER_X, WINDOW_CENTER_Y},
+        0,
+        WHITE
+    );
 
     // Drawing system trademark
     DrawTexturePro(

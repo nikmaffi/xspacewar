@@ -14,6 +14,7 @@ class GameEngine {
 private:
 	// Assets - textures
 	Image icon;
+	Texture monitorTex;
 	Texture knobTex;
 	Texture trademarkTex;
 	Texture backgroundTex;

@@ -108,12 +108,10 @@ inline float WINDOW_HEIGHT;
 
 // Basic structure
 #define VT_POS ((Vector2){WINDOW_CENTER_X, WINDOW_CENTER_Y})
-#define VT_CIRCLES_SEGS 64
 #define VT_MONITOR_RADIUS (WINDOW_HEIGHT / 2 - 72 * SCALE_FACTOR)
-#define VT_RING_RADIUS (VT_MONITOR_RADIUS + 25 * SCALE_FACTOR)
 #define VT_MONITOR_COLOR ((Color){34, 42, 22, 255})
-#define VT_RING_COLOR ((Color){198, 211, 216, 255})
-#define VT_CASE_COLOR ((Color){60, 77, 95, 255})
+//#define VT_RING_COLOR ((Color){198, 211, 216, 255})
+//#define VT_CASE_COLOR ((Color){60, 77, 95, 255})
 
 // Knobs
 #define KNOB_TEX_SCALE (.18f * SCALE_FACTOR)
