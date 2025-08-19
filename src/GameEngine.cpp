@@ -4,6 +4,7 @@ GameEngine::GameEngine(void) :
 icon(LoadImage((__gamePath + "/res/img/logo.png").c_str())),
 monitorTex(LoadSmoothTexture("/res/img/monitor.png")),
 knobTex(LoadSmoothTexture("/res/img/knob.png")),
+knobValueTex(LoadSmoothTexture("/res/img/knob_value.png")),
 trademarkTex(LoadSmoothTexture("/res/img/trademark.png")),
 backgroundTex(LoadSmoothTexture("/res/img/space.png")),
 anomalyTex(LoadSmoothTexture("/res/img/anomaly.png")),
@@ -24,9 +25,9 @@ labelFont(LoadFontEx((__gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SI
 laserSound(LoadSound((__gamePath + "/res/audio/laser.wav").c_str())),
 explosionSound(LoadSound((__gamePath + "/res/audio/explosion.wav").c_str())),
 monitor(VT_POS, monitorTex, VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
-flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
-burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
-volumeKnob(KNOB_VOLM_POS, knobTex, KNOB_TEX_SCALE, "Volume", labelFont),
+flickeringKnob(KNOB_FLCK_POS, knobTex, knobValueTex, KNOB_TEX_SCALE, "Flickering", labelFont),
+burnInKnob(KNOB_BRIN_POS, knobTex, knobValueTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
+volumeKnob(KNOB_VOLM_POS, knobTex, knobValueTex, KNOB_TEX_SCALE, "Volume", labelFont),
 userInterface(
 	UI_POS,
     interfaceFont,
@@ -106,6 +107,7 @@ GameEngine::~GameEngine() {
     UnloadTexture(anomalyTex);
     UnloadTexture(backgroundTex);
     UnloadTexture(trademarkTex);
+    UnloadTexture(knobValueTex);
     UnloadTexture(knobTex);
     UnloadTexture(monitorTex);
     UnloadImage(icon);
@@ -259,27 +261,27 @@ void GameEngine::update(void) {
 
 	if(!monitor.isRunning()) {
         userInterface.update(
-            "                    XSPACEWAR!\n"
-            "                 by Nicolo' Maffi\n\n"
+            "                   XSPACEWAR!\n"
+            "                by Nicolo' Maffi\n\n"
 
             "System Keys:\n"
             "[ENTER]                Start/Reset game\n"
             "[ESC]                  Quit\n\n"
 
             "Spaceship Keys:\n"
-            "[W] [UP    ] [T] [I]   Shoot\n"
-            "[S] [DOWN  ] [G] [K]   Turbo\n"
-            "[A] [LEFT  ] [F] [J]   Left rotation\n"
-            "[D] [RIGHT ] [H] [L]   Right rotation\n"
-            "[E] [RSHIFT] [Y] [O]   Hyperspace\n\n"
+            "[W] [UP   ] [T] [I]   Shoot\n"
+            "[S] [DOWN ] [G] [K]   Turbo\n"
+            "[A] [LEFT ] [F] [J]   Left rotation\n"
+            "[D] [RIGHT] [H] [L]   Right rotation\n"
+            "[E] [END  ] [Y] [O]   Hyperspace\n\n"
 
             "Game Modifiers:\n"
-            "[1]                    Retro' style ships      $f\n"
-            "[2]                    Unlimited projectiles   $f\n"
-            "[3]                    Unlimited fuel          $f\n"
-            "[4]                    Star as anomaly         $f\n"
-            "[5]                    One shot One kill       $f\n"
-            "[6]                    Number of players       $p\n\n",
+            "[1]                   Retro' style ships     $f\n"
+            "[2]                   Unlimited projectiles  $f\n"
+            "[3]                   Unlimited fuel         $f\n"
+            "[4]                   Star as anomaly        $f\n"
+            "[5]                   One shot One kill      $f\n"
+            "[6]                   Number of players      $p\n\n",
             __retroStyleShips,
             !__shipProjectilesLimit,
             !__shipFuelLimit,

@@ -54,7 +54,7 @@ void updateVolumeValue(float angle);
 // Keyboard map [turbo, shoot, hyperspace, left, right]
 const KeyboardKey keyboardMap[MAX_PLAYERS][NUM_ACTIONS] = {
 	{KEY_S, KEY_W, KEY_E, KEY_A, KEY_D},
-	{KEY_DOWN, KEY_UP, KEY_RIGHT_SHIFT, KEY_LEFT, KEY_RIGHT},
+	{KEY_DOWN, KEY_UP, KEY_END, KEY_LEFT, KEY_RIGHT},
 	{KEY_G, KEY_T, KEY_Y, KEY_F, KEY_H},
 	{KEY_K, KEY_I, KEY_O, KEY_J, KEY_L},
 };

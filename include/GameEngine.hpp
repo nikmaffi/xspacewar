@@ -16,6 +16,7 @@ private:
 	Image icon;
 	Texture monitorTex;
 	Texture knobTex;
+	Texture knobValueTex;
 	Texture trademarkTex;
 	Texture backgroundTex;
 	Texture anomalyTex;

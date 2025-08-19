@@ -1,9 +1,10 @@
 #include <Knob.hpp>
 
-Knob::Knob(const Vector2 &pos, const Texture &texture, float scale, const char *label, const Font &font):
+Knob::Knob(const Vector2 &pos, const Texture &texture, const Texture &valueTex, float scale, const char *label, const Font &font):
 pos(pos),
 angle(.0f),
 texture(texture),
+valueTex(valueTex),
 scale(scale),
 font(font),
 label(label),
@@ -42,10 +43,20 @@ void Knob::draw(void) {
     DrawTextEx(
         font,
         label.c_str(),
-        (Vector2){pos.x - labelDim.x / 2, pos.y - labelDim.y / 2 - texture.height * scale / 1.9f},
+        (Vector2){pos.x - labelDim.x / 2, pos.y - labelDim.y / 2 - texture.height * scale / 1.7f},
         font.baseSize,
         0.f,
         KNOB_FONT_COLOR
+    );
+
+    // Drawing the knob value indicator
+    DrawTexturePro(
+        valueTex,
+        (Rectangle){.0f, .0f, (float)texture.width, (float)texture.height},
+        (Rectangle){pos.x, pos.y, texture.width * scale, texture.height * scale},
+        (Vector2){texture.width * scale / 2.f, texture.height * scale / 2.f},
+        .0f,
+        WHITE
     );
 
     // Drawing rescaled texture
