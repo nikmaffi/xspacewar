@@ -59,7 +59,7 @@ void Player::reloadTextures(const Texture &playerTex, const Texture &laserTex) {
 void Player::reset(void) {
 	// Resetting players atributes
 	sprint = false;
-	projectilesCount = oneShotOneKill ? 1 : PLAYER_MAX_PROJECTILES;
+	projectilesCount = __oneShotOneKill ? 1 : PLAYER_MAX_PROJECTILES;
 	fuel = PLAYER_MAX_FUEL;
 	capturedByGravityWell = false;
 	dead = false;
@@ -72,7 +72,6 @@ void Player::reset(void) {
 
 	projectiles.clear();
 
-	flickeringTimer = .0f;
 	explosionTimer = EXPLOSION_WAIT_TIME + 1;
 	fireTimer = .0f;
 	hyperspaceTimer = PLAYER_HYPERSPACE_READY;
@@ -99,7 +98,7 @@ void Player::move(float step) {
 
 	// Enabling sprint mode and consume fuel
 	sprint = true;
-	fuel -= 1 * shipFuelLimit;
+	fuel -= 1 * __shipFuelLimit;
 
 	// Moving the player in the direction of the current angle
 	move((Vector2){std::cos(angle * DEG2RAD) * step, std::sin(angle * DEG2RAD) * step});
@@ -134,7 +133,7 @@ void Player::shoot(void) {
 	// Resetting the fire cooldown timer
 	fireTimer = PLAYER_FIRE_TIME;
 	// Consuming one projectile based on ship's projectile limit
-	projectilesCount -= 1 * shipProjectilesLimit;
+	projectilesCount -= 1 * __shipProjectilesLimit;
 
 	// Computing the spawn distance from the player's center
 	float dist = sprite.height / 2;
@@ -179,7 +178,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 		// Moving the laser
 		projectiles[i].move();
 		// If the anomaly is a black hole, apply its gravitational pull to the projectile
-		if(blackHoleAsAnomaly) {
+		if(__blackHoleAsAnomaly) {
 			projectiles[i].move(anomaly.attract(projectiles[i].pos));
 		} 
 
@@ -191,7 +190,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 			projectiles.erase(projectiles.begin() + i);
 		} else {
 			// Checking laser collision with other players, except the current one
-			for(size_t k = 0; k < numPlayers; k++) {\
+			for(size_t k = 0; k < __numPlayers; k++) {\
 				// Checking if k indexes the current player
 				if(k == self || others[k].dead) {
 					continue;
@@ -287,7 +286,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 	}
 
 	// Check collision with other players
-	for(size_t i = 0; i < numPlayers; i++) {
+	for(size_t i = 0; i < __numPlayers; i++) {
 		// Checking if i indexes the current player or the player i is dead
 		if(i == self || others[i].dead) {
 			continue;

@@ -1,18 +1,20 @@
 #include <xspacewar.hpp>
 
-// Global parameters
+// Global values
 unsigned char __burnInEffectValue = 255;
 unsigned char __flickeringEffectValue = 150;
-float         __volumeValue = 0.f;
-bool          shipProjectilesLimit = true;
-bool          shipFuelLimit = true;
-bool          blackHoleAsAnomaly = false;
-bool          retroStyleShips = true;
-bool          oneShotOneKill = false;
-size_t        numPlayers = 2;
+float __volumeValue = 0.f;
+size_t __numPlayers = 2;
+
+// Global flags
+bool __shipProjectilesLimit = true;
+bool __shipFuelLimit = true;
+bool __blackHoleAsAnomaly = false;
+bool __retroStyleShips = true;
+bool __oneShotOneKill = false;
 
 // Argv path used for locate game resources
-std::string   gamePath = ".";
+std::string __gamePath = ".";
 
 // Knobs update functions
 void updateFlickeringEffectValue(float angle) {

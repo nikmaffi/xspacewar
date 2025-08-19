@@ -15,7 +15,7 @@ void initWindow(void) {
 
 int main(int argc, char *argv[]) {
     // Set game path to argument if provided, otherwise use current directory
-    gamePath = (argc == 2) ? argv[1] : ".";
+    __gamePath = (argc == 2) ? argv[1] : ".";
 
     // Initializing subsystems
     initWindow();

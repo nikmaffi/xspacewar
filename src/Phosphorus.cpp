@@ -200,7 +200,7 @@ void Phosphorus::update(bool monitorRunning) {
 	}
 
     // Updating the players
-    for(size_t i = 0; i < numPlayers; i++) {
+    for(size_t i = 0; i < __numPlayers; i++) {
         updatePlayer(players[i], monitorRunning);
         updatePlayerExplosion(players[i], monitorRunning);
         updatePlayerLaser(players[i], monitorRunning);

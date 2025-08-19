@@ -23,7 +23,7 @@ const Circle &Anomaly::getCircle(void) const {
 
 void Anomaly::changeAnomaly(void) {
 	// Changing anomaly sprite based on settings
-	if(blackHoleAsAnomaly) {
+	if(__blackHoleAsAnomaly) {
         sprite = (Rectangle){.0f, texture.height / 2.f, (float)texture.width, texture.height / 2.f};
 	} else {
         sprite = (Rectangle){.0f, .0f, (float)texture.width, texture.height / 2.f};

@@ -27,19 +27,21 @@
 // GLOBALS
 // ############################################################################################################################
 
-// Global parameters
+// Global values
 extern unsigned char __burnInEffectValue;
 extern unsigned char __flickeringEffectValue;
-extern float 		 __volumeValue;
-extern bool          shipProjectilesLimit;
-extern bool          shipFuelLimit;
-extern bool          blackHoleAsAnomaly;
-extern bool          retroStyleShips;
-extern bool          oneShotOneKill;
-extern size_t        numPlayers;
+extern float __volumeValue;
+extern size_t __numPlayers;
+
+// Global flags
+extern bool __shipProjectilesLimit;
+extern bool __shipFuelLimit;
+extern bool __blackHoleAsAnomaly;
+extern bool __retroStyleShips;
+extern bool __oneShotOneKill;
 
 // Argv path used for locate game resources
-extern std::string   gamePath;
+extern std::string __gamePath;
 
 // Knobs update functions
 void updateFlickeringEffectValue(float angle);

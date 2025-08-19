@@ -1,7 +1,7 @@
 #include <GameEngine.hpp>
 
 GameEngine::GameEngine(void) :
-icon(LoadImage("/res/img/logo.png")),
+icon(LoadImage((__gamePath + "/res/img/logo.png").c_str())),
 monitorTex(LoadSmoothTexture("/res/img/monitor.png")),
 knobTex(LoadSmoothTexture("/res/img/knob.png")),
 trademarkTex(LoadSmoothTexture("/res/img/trademark.png")),
@@ -19,10 +19,10 @@ lasersTex{
     {},
     {}
 },
-interfaceFont(LoadFontEx((gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
-labelFont(LoadFontEx((gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SIZE, 0, 0)),
-laserSound(LoadSound((gamePath + "/res/audio/laser.wav").c_str())),
-explosionSound(LoadSound((gamePath + "/res/audio/explosion.wav").c_str())),
+interfaceFont(LoadFontEx((__gamePath + "/res/fonts/Doto.ttf").c_str(), UI_FONT_SIZE, 0, 0)),
+labelFont(LoadFontEx((__gamePath + "/res/fonts/VT323.ttf").c_str(), KNOB_FONT_SIZE, 0, 0)),
+laserSound(LoadSound((__gamePath + "/res/audio/laser.wav").c_str())),
+explosionSound(LoadSound((__gamePath + "/res/audio/explosion.wav").c_str())),
 monitor(VT_POS, monitorTex, VT_TRADEMARK_POS, trademarkTex, VT_TRADEMARK_SCALE),
 flickeringKnob(KNOB_FLCK_POS, knobTex, KNOB_TEX_SCALE, "Flickering", labelFont),
 burnInKnob(KNOB_BRIN_POS, knobTex, KNOB_TEX_SCALE, "Burn-in", labelFont),
@@ -99,7 +99,7 @@ GameEngine::~GameEngine() {
     // Unloading textures
     for(int i = 0; i < MAX_PLAYERS; i++) {
         UnloadTexture(playersTex[i]);
-        if(i == 0 || !retroStyleShips) {
+        if(i == 0 || !__retroStyleShips) {
             UnloadTexture(lasersTex[i]);
         }
     }
@@ -116,7 +116,7 @@ GameEngine::~GameEngine() {
 }
 
 Texture GameEngine::LoadSmoothTexture(const char *fileName) {
-    Texture texture = LoadTexture((gamePath + fileName).c_str());
+    Texture texture = LoadTexture((__gamePath + fileName).c_str());
 
     // Generating texture mipmaps
     GenTextureMipmaps(&texture);
@@ -130,7 +130,7 @@ void GameEngine::eventsHandler(void) {
     // Start/stop game
     if(IsKeyPressed(KEY_ENTER)) {
         if(monitor.isRunning()) {
-            for(size_t i = 0; i < numPlayers; i++) {
+            for(size_t i = 0; i < __numPlayers; i++) {
                 players[i].reset();
             }
 
@@ -158,16 +158,16 @@ void GameEngine::eventsHandler(void) {
         if(IsKeyPressed(KEY_ONE)) {
             // Unloading old textures
             for(int i = 0; i < MAX_PLAYERS; i++) {
-                if(i == 0 || !retroStyleShips) {
+                if(i == 0 || !__retroStyleShips) {
                     UnloadTexture(lasersTex[i]);
                 }
                 UnloadTexture(playersTex[i]);
             }
 
-            retroStyleShips = !retroStyleShips;
+            __retroStyleShips = !__retroStyleShips;
 
             // Loading new textures based on selected settings
-            if(retroStyleShips) {
+            if(__retroStyleShips) {
                 playersTex[0] = LoadSmoothTexture("/res/img/player_1.png");
                 playersTex[1] = LoadSmoothTexture("/res/img/player_2.png");
                 playersTex[2] = LoadSmoothTexture("/res/img/player_3.png");
@@ -194,34 +194,34 @@ void GameEngine::eventsHandler(void) {
         }
 
         if(IsKeyPressed(KEY_TWO)) {
-            shipProjectilesLimit = !shipProjectilesLimit;
-			oneShotOneKill = false;
+            __shipProjectilesLimit = !__shipProjectilesLimit;
+			__oneShotOneKill = false;
         }
 
         if(IsKeyPressed(KEY_THREE)) {
-            shipFuelLimit = !shipFuelLimit;
+            __shipFuelLimit = !__shipFuelLimit;
         }
 
         if(IsKeyPressed(KEY_FOUR)) {
-            blackHoleAsAnomaly = !blackHoleAsAnomaly;
+            __blackHoleAsAnomaly = !__blackHoleAsAnomaly;
             anomaly.changeAnomaly();
         }
 
         if(IsKeyPressed(KEY_FIVE)) {
-            oneShotOneKill = !oneShotOneKill;
-            shipProjectilesLimit = true;
+            __oneShotOneKill = !__oneShotOneKill;
+            __shipProjectilesLimit = true;
 
-            for(size_t i = 0; i < numPlayers; i++) {
+            for(size_t i = 0; i < __numPlayers; i++) {
                 players[i].reset();
             }
         }
 
         if(IsKeyPressed(KEY_SIX)) {
-            numPlayers = (numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
+            __numPlayers = (__numPlayers - MIN_PLAYERS + 1) % (MAX_PLAYERS - MIN_PLAYERS + 1) + MIN_PLAYERS;
         }
     } else {
         // Players mechanics commands
-        for(size_t i = 0; i < numPlayers; i++) {
+        for(size_t i = 0; i < __numPlayers; i++) {
             if(IsKeyDown(keyboardMap[i][0])) {
                 players[i].move(PLAYER_SPRINT);
             }
@@ -271,25 +271,25 @@ void GameEngine::update(void) {
             "[4]                    Star as anomaly         $f\n"
             "[5]                    One shot One kill       $f\n"
             "[6]                    Number of players       $p\n\n",
-            retroStyleShips,
-            !shipProjectilesLimit,
-            !shipFuelLimit,
-            !blackHoleAsAnomaly,
-            oneShotOneKill,
-            numPlayers
+            __retroStyleShips,
+            !__shipProjectilesLimit,
+            !__shipFuelLimit,
+            !__blackHoleAsAnomaly,
+            __oneShotOneKill,
+            __numPlayers
         );
 	} else {
         int alive = 0;
 
         // Counting how many players are alive
-        for(size_t i = 0; i < numPlayers; i++) {
+        for(size_t i = 0; i < __numPlayers; i++) {
             players[i].update(players, i, anomaly);
             alive += !players[i].isDead();
         }
 
         // If a single player is alive, or all players are dead the game starts again
         if(alive <= 1) {
-            for(size_t i = 0; i < numPlayers; i++) {
+            for(size_t i = 0; i < __numPlayers; i++) {
                 players[i].reset();
             }
         }
@@ -304,7 +304,7 @@ void GameEngine::draw(void) {
         // Drawing game objects
 		background.draw();
 		anomaly.draw();
-		for(size_t i = 0; i < numPlayers; i++) {
+		for(size_t i = 0; i < __numPlayers; i++) {
             players[i].draw();
         }
 	} else {
