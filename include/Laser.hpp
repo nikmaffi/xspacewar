@@ -30,13 +30,12 @@ private:
     float scale;
 
 	// Timers
-	float flickeringTimer;
 	float explosionTimer;
 
 	// Explosion attributes
 	Particles particles;
 public:
-	Laser(const Vector2 &pos, const Texture &texture, float angle, float scale);
+	Laser(const Vector2 &pos, const Texture &texture, float angle, float scale, unsigned char playerAlpha);
 	Laser(const Laser &laser);
 	Laser &operator=(const Laser &laser);
 	bool isExploding(void) const;

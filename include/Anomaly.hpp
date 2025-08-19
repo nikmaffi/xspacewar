@@ -22,9 +22,6 @@ private:
     Color color;
     float scale;
 
-	// Timers
-	float flickeringTimer;
-
 	// Random number generator
 	std::random_device rd;
 	std::uniform_real_distribution<float> dist;

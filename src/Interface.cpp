@@ -4,8 +4,7 @@ Interface::Interface(const Vector2 &pos, const Font &font, const Color &color):
 pos(pos),
 text(""),
 font(font),
-color(color),
-flickeringTimer(.0f) {
+color(color) {
 }
 
 void Interface::update(const char *str, ...) {
@@ -40,21 +39,16 @@ void Interface::update(const char *str, ...) {
 }
 
 void Interface::draw(void) {
-    // Updating flickering effect timer
-    flickeringTimer += GetFrameTime();
-
     // Resetting the flickering timer
-    if(flickeringTimer >= FLICKERING_INTERVAL) {
-        flickeringTimer = .0f;
-
-        // Simulating flickering effect
-        // Adjusting texture alpha value based on previous one
-        if(color.a != 255) {
-            color.a = 255;
-        } else {
-            color.a = __flickeringEffectValue;
-        }
-    }
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
+		// Simulating flickering effect
+		// Adjusting texture alpha value based on previous one
+		if(color.a != 255) {
+			color.a = 255;
+		} else {
+			color.a = __flickeringEffectValue;
+		}
+	}
 
     // Computing text dimensions
     Vector2 dim = MeasureTextEx(font, text.c_str(), font.baseSize, 0.f);

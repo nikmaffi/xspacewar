@@ -44,7 +44,6 @@ private:
 	Sound laserSound;
 
 	// Timers
-	float flickeringTimer;
 	float explosionTimer;
 	float fireTimer;
 	float hyperspaceTimer;

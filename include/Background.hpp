@@ -8,9 +8,6 @@ private:
 	// Game object attributes
 	Texture texture;
     Color color;
-
-	// Timers
-	float flickeringTimer;
 public:
 	Background(const Texture &texture);
 	void draw(void);

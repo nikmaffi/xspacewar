@@ -6,6 +6,9 @@ unsigned char __flickeringEffectValue = 150;
 float __volumeValue = 0.f;
 size_t __numPlayers = 2;
 
+// Global timers
+float __flickeringTimer = .0f;
+
 // Global flags
 bool __shipProjectilesLimit = true;
 bool __shipFuelLimit = true;

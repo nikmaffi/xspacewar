@@ -18,7 +18,6 @@ color(WHITE),
 scale(scale),
 laserTexture(laserTex),
 laserSound(laserSound),
-flickeringTimer(.0f),
 explosionTimer(EXPLOSION_WAIT_TIME + 1),
 fireTimer(.0f),
 hyperspaceTimer(PLAYER_HYPERSPACE_READY),
@@ -144,7 +143,8 @@ void Player::shoot(void) {
             (Vector2){pos.x + dist * std::cos(angle * DEG2RAD), pos.y + dist * std::sin(angle * DEG2RAD)},
             laserTexture,
             angle,
-            LASER_TEX_SCALE
+            LASER_TEX_SCALE,
+			color.a
         )
 	);
 
@@ -163,7 +163,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 			continue;
 		} else if(projectiles[i].explosionTimer == EXPLOSION_WAIT_TIME) {
 			// Laser energy is finished
-            projectiles[i].particles.init(projectiles[i].pos);
+            projectiles[i].particles.init(projectiles[i].pos, projectiles[i].color.a);
 		} else if(projectiles[i].explosionTimer >= EXPLOSION_SMALL_TIME && projectiles[i].isExploding()) {
 			// Laser is exploding
 			projectiles[i].particles.expandBy(EXPLOSION_PARTICLE_VELOCITY);
@@ -231,7 +231,7 @@ void Player::update(Player *others, size_t self, const Anomaly &anomaly) {
 	if(explosionTimer <= 0) {
 		dead = true;
 	} else if(explosionTimer == EXPLOSION_WAIT_TIME && !capturedByGravityWell) {
-        particles.init(pos);
+        particles.init(pos, color.a);
 	} else if(explosionTimer >= EXPLOSION_LARGE_TIME && isExploding() && !capturedByGravityWell) {
 		particles.expandBy(EXPLOSION_PARTICLE_VELOCITY);
 	}
@@ -334,13 +334,8 @@ void Player::draw(void) {
 		return;
 	}
 
-	// Updating flickering effect timer
-	flickeringTimer += GetFrameTime();
-
 	// Resetting the flickering timer
-	if(flickeringTimer >= FLICKERING_INTERVAL) {
-		flickeringTimer = .0f;
-
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
 		// Simulating flickering effect
 		// Adjusting texture alpha value based on previous one
 		if(color.a != 255) {

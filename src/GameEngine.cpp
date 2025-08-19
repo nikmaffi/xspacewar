@@ -82,7 +82,7 @@ phosphorus(players, anomaly, userInterface) {
     burnInKnob.setAngle(__burnInEffectValue * 180.f / 255);
     volumeKnob.setAngle(__volumeValue * 180);
 
-    // Settings sounds volume
+    // Setting sounds volume
     SetSoundVolume(laserSound, __volumeValue);
     SetSoundVolume(explosionSound, __volumeValue);
 }
@@ -120,7 +120,7 @@ Texture GameEngine::LoadSmoothTexture(const char *fileName) {
 
     // Generating texture mipmaps
     GenTextureMipmaps(&texture);
-    // Settings bilinear filter for better quality
+    // Setting bilinear filter for better quality
     SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
 
     return texture;
@@ -148,7 +148,7 @@ void GameEngine::eventsHandler(void) {
         burnInKnob.update(mouse, updateBurnInEffectValue);
         volumeKnob.update(mouse, updateVolumeValue);
 
-        // Settings sounds volume
+        // Setting sounds volume
         SetSoundVolume(laserSound, __volumeValue);
         SetSoundVolume(explosionSound, __volumeValue);
     }
@@ -246,6 +246,15 @@ void GameEngine::eventsHandler(void) {
 }
 
 void GameEngine::update(void) {
+    // Resetting the flickering timer
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
+        __flickeringTimer = .0f;
+	}
+
+    // Updating flickering effect timer
+    __flickeringTimer += GetFrameTime();
+
+    // Updating burn-in effect
 	phosphorus.update(monitor.isRunning());
 
 	if(!monitor.isRunning()) {

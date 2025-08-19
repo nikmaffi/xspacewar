@@ -14,9 +14,6 @@ private:
     std::string text;
 	Font font;
 	Color color;
-
-	// Timers
-	float flickeringTimer;
 public:
 	Interface(const Vector2 &pos, const Font &font, const Color &color);
 	Interface(void);

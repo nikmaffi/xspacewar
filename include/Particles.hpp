@@ -16,9 +16,6 @@ private:
     // Explosion color
     Color color;
 
-    // Timers
-    float flickeringTimer;
-
     // Random number generator
     std::random_device rd;
 	std::uniform_real_distribution<float> dist;
@@ -26,7 +23,7 @@ public:
     Particles(unsigned int size, const Color &color);
     ~Particles();
     Particles &operator=(const Particles &p);
-    void init(const Vector2 &pos);
+    void init(const Vector2 &pos, unsigned char alpha);
     void expandBy(float factor);
     void draw(void);
 };

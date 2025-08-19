@@ -33,6 +33,9 @@ extern unsigned char __flickeringEffectValue;
 extern float __volumeValue;
 extern size_t __numPlayers;
 
+// Global timers
+extern float __flickeringTimer;
+
 // Global flags
 extern bool __shipProjectilesLimit;
 extern bool __shipFuelLimit;

@@ -1,6 +1,6 @@
 #include <Laser.hpp>
 
-Laser::Laser(const Vector2 &pos, const Texture &texture, float angle, float scale):
+Laser::Laser(const Vector2 &pos, const Texture &texture, float angle, float scale, unsigned char playerAlpha):
 pos(pos),
 angle(angle),
 vel((Vector2){LASER_SPEED * std::cos(angle * DEG2RAD), LASER_SPEED * std::sin(angle * DEG2RAD)}),
@@ -9,9 +9,9 @@ texture(texture),
 collisionBox(Circle(pos, texture.width / 2.f)),
 color(WHITE),
 scale(scale),
-flickeringTimer(.0f),
 explosionTimer(EXPLOSION_WAIT_TIME + 1),
 particles(EXPLOSION_SMALL_PARTICLES, EXPLOSION_COLOR) {
+	color.a = playerAlpha;
 }
 
 Laser::Laser(const Laser &laser):
@@ -31,7 +31,6 @@ Laser& Laser::operator=(const Laser &laser) {
     color = laser.color;
 	scale = laser.scale;
 
-	flickeringTimer = laser.flickeringTimer;
 	explosionTimer = laser.explosionTimer;
 
 	// Operator = must return a reference to lvalue
@@ -98,13 +97,8 @@ void Laser::draw(void) {
 		return;
 	}
 
-	// Updating flickering effect timer
-	flickeringTimer += GetFrameTime();
-
 	// Resetting the flickering timer
-	if(flickeringTimer >= FLICKERING_INTERVAL) {
-		flickeringTimer = .0f;
-
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
 		// Simulating flickering effect
 		// Adjusting texture alpha value based on previous one
 		if(color.a != 255) {

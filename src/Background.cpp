@@ -2,20 +2,14 @@
 
 Background::Background(const Texture &texture):
 texture(texture),
-color(WHITE),
-flickeringTimer(.0f) {
+color(WHITE) {
 	// Setting texture repeat flag
 	SetTextureWrap(texture, TEXTURE_WRAP_REPEAT);
 }
 
 void Background::draw(void) {
-	// Updating flickering effect timer
-	flickeringTimer += GetFrameTime();
-
 	// Resetting the flickering timer
-	if(flickeringTimer >= FLICKERING_INTERVAL) {
-		flickeringTimer = .0f;
-
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
 		// Simulating flickering effect
 		// Adjusting texture alpha value based on previous one
 		if(color.a != 255) {

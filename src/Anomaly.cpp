@@ -9,7 +9,6 @@ sprite((Rectangle){.0f, .0f, (float)texture.width, texture.height / 2.f}),
 collisionBox(Circle(pos, ANOMALY_COLLISION_RADIUS)),
 color(WHITE),
 scale(scale),
-flickeringTimer(.0f),
 dist(0.f, 359.f) {
 }
 
@@ -45,13 +44,8 @@ Vector2 Anomaly::attract(const Vector2 &objPos) const {
 }
 
 void Anomaly::draw(void) {
-	// Updating flickering effect timer
-	flickeringTimer += GetFrameTime();
-
 	// Resetting the flickering timer
-	if(flickeringTimer >= FLICKERING_INTERVAL) {
-		flickeringTimer = .0f;
-
+	if(__flickeringTimer >= FLICKERING_INTERVAL) {
 		// Simulating flickering effect
 		// Adjusting texture alpha value based on previous one
 		if(color.a != 255) {
