@@ -1,4 +1,4 @@
-# XSpacewar!™ 🚀
+# XSpacewar! 🚀
 ![Title](assets/logo.png)
 
 
